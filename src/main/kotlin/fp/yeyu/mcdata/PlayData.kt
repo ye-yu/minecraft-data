@@ -75,8 +75,7 @@ object PlayData : ModInitializer, ClientModInitializer {
     private fun logPlayer(player: ServerPlayerEntity, packetByteBuf: PacketByteBuf) {
         FileWriter(logDestination, true).use {
             it.write(
-                    "\n",
-                    "\n",
+                    strings = arrayOf(
                     LogUtil.getTimeStamp(),
                     LogUtil.getUUID(player),
                     LogUtil.getBlockPosition(player),
@@ -87,7 +86,7 @@ object PlayData : ModInitializer, ClientModInitializer {
                     LogUtil.getHotBarCursor(player),
                     LogUtil.getInventory(player),
                     LogUtil.getVisibleBlocks(player),
-                    LogUtil.getEndStamp()
+                    LogUtil.getEndStamp())
             )
         }
     }
@@ -100,10 +99,8 @@ object PlayData : ModInitializer, ClientModInitializer {
         ClientSidePacketRegistryImpl.INSTANCE.sendToServer(logSender, PacketByteBuf(Unpooled.buffer()).also(LogUtil::writeKeyPresses))
     }
 
-
-}
-
-private fun FileWriter.write(separator: String, end: String = "\n", vararg strings: String) {
-    write(strings.joinToString(separator))
-    write(end)
+    private fun FileWriter.write(separator: String = "\n", end: String = "\n", vararg strings: String) {
+        write(strings.joinToString(separator))
+        write(end)
+    }
 }
