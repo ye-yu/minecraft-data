@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "$modId",
+  "version": "$version",
+  "name": "$name",
+  "description": "$description",
+  "authors": [
+    "YeYu"
+  ],
+  "contact": {
+    "homepage": "https://github.com/ye-yu",
+    "sources": "https://github.com/ye-yu"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/$modId/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "fp.yeyu.mcdata.PlayData"
+      }
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "fp.yeyu.mcdata.PlayData"
+      }
+    ]
+  },
+  "mixins": [
+    "pd.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "fabric-language-kotlin": ">=$kotlinVersion",
+    "minecraft": "$minecraftVersion"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
