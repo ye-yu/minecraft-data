@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos
 import java.util.stream.IntStream
 import kotlin.streams.asSequence
 
-object LogUtil {
+object AttributeUtil {
 
     private val isClient: Boolean get() = FabricLoader.getInstance().environmentType == EnvType.CLIENT
     private val envPrefix: String get() = if (isClient) "client: " else "server: "
