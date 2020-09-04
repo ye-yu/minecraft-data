@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.network.PacketContext
 import net.fabricmc.fabric.impl.networking.ClientSidePacketRegistryImpl
 import net.fabricmc.fabric.impl.networking.ServerSidePacketRegistryImpl
+import net.minecraft.client.MinecraftClient
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
@@ -34,12 +35,13 @@ import kotlin.random.Random
  * */
 object PlayData : ModInitializer, ClientModInitializer {
     private val logRequest = Identifier("playdata", "requestlog")
-    private val logSender = Identifier("playdata", "requestlog")
+    private val logLocal = Identifier("playdata", "loglocal")
+    private val logSender = Identifier("playdata", "sendlog")
     private val logDestination by lazy(PlayData::createLogDestination)
     private val random = Random(System.currentTimeMillis())
     private const val logDirectory = "playdata-log"
     private val logDirectoryInstance = File(logDirectory).also {
-        if (!it.exists() && it.mkdir()) println("created directory $logDirectory");
+        if (!it.exists() && it.mkdir()) println("created directory $logDirectory")
         else if (it.isFile) throw FileAlreadyExistsException(it, reason = "$logDirectory already exists and it is a file")
     }
 
@@ -52,6 +54,7 @@ object PlayData : ModInitializer, ClientModInitializer {
 
     private fun registerCommands(commandDispatcher: CommandDispatcher<ServerCommandSource>, isDedicated: Boolean) {
         commandDispatcher.register(CommandManager.literal("logeverything").executes(PlayData::requestInfoCommand))
+        commandDispatcher.register(CommandManager.literal("loglocal").executes(PlayData::requestLogLocalCommand))
     }
 
     private fun requestInfoCommand(context: CommandContext<out ServerCommandSource>): Int {
@@ -61,8 +64,24 @@ object PlayData : ModInitializer, ClientModInitializer {
         return 1
     }
 
+    private fun requestLogLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
+        val player = context.source.entity as ServerPlayerEntity?
+                ?: return requestLogAllPlayers(context.source.world as ServerWorld)
+        requestLogLocal(player)
+        return 1
+    }
+
+    private fun requestLogAllPlayers(serverWorld: ServerWorld): Int {
+        serverWorld.players.forEach(PlayData::requestLogLocal)
+        return 1
+    }
+
+    private fun requestLogLocal(player: ServerPlayerEntity) {
+        ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, logLocal, PacketByteBuf(Unpooled.buffer()))
+    }
+
     private fun logAllPlayers(serverWorld: ServerWorld): Int {
-        serverWorld.players.forEach { requestInfo(it) }
+        serverWorld.players.forEach(this::requestInfo)
         return serverWorld.players.size
     }
 
@@ -76,6 +95,7 @@ object PlayData : ModInitializer, ClientModInitializer {
         FileWriter(logDestination, true).use {
             it.write(
                     strings = arrayOf(
+                    "Log server",
                     LogUtil.getTimeStamp(),
                     LogUtil.getUUID(player),
                     LogUtil.getBlockPosition(player),
@@ -91,13 +111,36 @@ object PlayData : ModInitializer, ClientModInitializer {
         }
     }
 
-    override fun onInitializeClient() {
-        ClientSidePacketRegistryImpl.INSTANCE.register(logRequest, PlayData::onLogInfoRequest)
+    private fun logPlayer() {
+        val player = MinecraftClient.getInstance().player ?: return
+        FileWriter(logDestination, true).use {
+            it.write(
+                    strings = arrayOf(
+                            "Log local",
+                            LogUtil.getTimeStamp(),
+                            LogUtil.getUUID(player),
+                            LogUtil.getBlockPosition(player),
+                            LogUtil.getHeadRotation(player),
+                            LogUtil.getCrossHairBlock(player),
+                            LogUtil.getKeyPresses(),
+                            LogUtil.getVisibleMob(player),
+                            LogUtil.getHotBarCursor(player),
+                            LogUtil.getInventory(player),
+                            LogUtil.getVisibleBlocks(player),
+                            LogUtil.getEndStamp())
+            )
+        }
     }
 
-    private fun onLogInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) {
-        ClientSidePacketRegistryImpl.INSTANCE.sendToServer(logSender, PacketByteBuf(Unpooled.buffer()).also(LogUtil::writeKeyPresses))
+    override fun onInitializeClient() {
+        ClientSidePacketRegistryImpl.INSTANCE.register(logRequest, PlayData::onLogInfoRequest)
+        ClientSidePacketRegistryImpl.INSTANCE.register(logLocal, PlayData::onLogLocalRequest)
     }
+
+    private fun onLogInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) =
+            ClientSidePacketRegistryImpl.INSTANCE.sendToServer(logSender, PacketByteBuf(Unpooled.buffer()).also(LogUtil::writeKeyPresses))
+
+    private fun onLogLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = logPlayer()
 
     private fun FileWriter.write(separator: String = "\n", end: String = "\n", vararg strings: String) {
         write(strings.joinToString(separator))
