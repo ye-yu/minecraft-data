@@ -5,6 +5,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.HitResult
@@ -43,11 +44,15 @@ object AttributeUtil {
     }
 
     fun getInventory(player: PlayerEntity): String {
-        return "inv: " + IntStream.range(0, player.inventory.size()).mapToObj(player.inventory::getStack).asSequence().joinToString(",") { it.toString() }
+        return "inv: " + IntStream.range(0, player.inventory.size())
+                .mapToObj { Pair(it, player.inventory.getStack(it)) }
+                .filter{ !it.second.isEmpty }
+                .asSequence()
+                .joinToString(",") {  "${it.first}:${it.second}" }
     }
 
     fun getVisibleBlocks(player: PlayerEntity): String {
-        return "mobs: blocks"
+        return "blocks: "
     }
 
     fun getTimeStamp(): String = "${System.currentTimeMillis()}"
