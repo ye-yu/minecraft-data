@@ -85,11 +85,6 @@ object AttributeUtil {
         }
     }
 
-    private fun isOfEntityAt(world: World, position: BlockPos, target: Entity): Boolean {
-        val entitiesByClass = world.getEntitiesByClass(target::class.java, Box(position), null)
-        return entitiesByClass.any { it == target }
-    }
-
     private fun BlockPos.lowerCorner(distance: Int): BlockPos = BlockPos(this.x - distance, 0, this.z - distance)
     private fun BlockPos.upperCorner(distance: Int): BlockPos = BlockPos(this.x + distance, 256, this.z + distance)
 }
