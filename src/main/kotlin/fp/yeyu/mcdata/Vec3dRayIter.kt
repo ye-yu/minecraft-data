@@ -2,15 +2,30 @@ package fp.yeyu.mcdata
 
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import kotlin.properties.Delegates
 
-class Vec3dRayIter(private val from: Vec3d, private val to: Vec3d) : Iterable<BlockPos>, Iterator<BlockPos> {
+open class Vec3dRayIter(from: Vec3d, to: Vec3d) : Iterable<BlockPos>, Iterator<BlockPos> {
 
     var next = false
-    var current = BlockPos(from)
-    var toBlockPos = BlockPos(to)
-    var directionVector: Vec3d = to.subtract(from)
-    var factor = 1.0 / NumberUtil.max(directionVector.x, directionVector.y, directionVector.z)
+    private lateinit var current: BlockPos
+    private lateinit var toBlockPos: BlockPos
+    private lateinit var directionVector: Vec3d
+    private var factor by Delegates.notNull<Double>()
     var multiplier = 0
+
+    var from: Vec3d = from
+        set(value) {
+            field = value
+            current = BlockPos(value)
+        }
+    var to: Vec3d = to
+        set(value) {
+            field = value
+            toBlockPos = BlockPos(value)
+            value.subtract(from)
+            factor = 1.0 / NumberUtil.max(directionVector.x, directionVector.y, directionVector.z)
+            multiplier = 0
+        }
 
     override fun iterator(): Iterator<BlockPos> = Vec3dRayIter(from, to)
 

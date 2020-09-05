@@ -76,9 +76,8 @@ object SightUtil {
     private fun canSeeThroughEntityAt(sourceEntity: Entity, sourcePos: Vec3d, targetPos: Vec3d): Boolean {
         val world = sourceEntity.world
 
-        for (rayBlock in Vec3dRayIter(sourcePos, targetPos)) {
+        for (rayBlock in Vec3dRayIterShared.new(sourcePos, targetPos)) {
             val block = world.getBlockState(rayBlock)
-
             if (block.material == Material.AIR) continue
             if (block.isTranslucent(world, rayBlock)) continue
             return false
