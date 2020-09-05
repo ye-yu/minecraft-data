@@ -14,10 +14,14 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.FileWriter
 
 @Suppress("UNUSED_PARAMETER")
 object CommandUtil {
+
+    val logger: Logger = LogManager.getLogger()
 
     object Identifiers {
         val logRequest = Identifier("playdata", "requestlog")
@@ -52,17 +56,17 @@ object CommandUtil {
                 it.write(
                         strings = arrayOf(
                                 "Log local",
-                                AttributeUtil.getTimeStamp(),
-                                AttributeUtil.getUUID(player),
-                                AttributeUtil.getBlockPosition(player),
-                                AttributeUtil.getHeadRotation(player),
-                                AttributeUtil.getCrossHairBlock(player),
-                                AttributeUtil.getKeyPresses(),
-                                AttributeUtil.getVisibleMob(player),
-                                AttributeUtil.getHotBarCursor(player),
-                                AttributeUtil.getInventory(player),
-                                AttributeUtil.getVisibleBlocks(player),
-                                AttributeUtil.getEndStamp())
+                                AttributeUtil.getTimeStamp().also { logger.info("Writing timestamp") },
+                                AttributeUtil.getUUID(player).also { logger.info("Writing uuid") },
+                                AttributeUtil.getBlockPosition(player).also { logger.info("Writing blockPos") },
+                                AttributeUtil.getHeadRotation(player).also { logger.info("Writing headRotation") },
+                                AttributeUtil.getCrossHairBlock(player).also { logger.info("Writing crossHairBlock") },
+                                AttributeUtil.getKeyPresses().also { logger.info("Writing key presses") },
+                                AttributeUtil.getVisibleMob(player).also { logger.info("Writing visible mobs") },
+                                AttributeUtil.getHotBarCursor(player).also { logger.info("Writing hot bar cursor") },
+                                AttributeUtil.getInventory(player).also { logger.info("Writing inventory") },
+                                AttributeUtil.getVisibleBlocks(player).also { logger.info("Writing visible blocks") },
+                                AttributeUtil.getEndStamp().also { logger.info("Writing end stamp") },)
                 )
             }
         }
