@@ -17,21 +17,6 @@ import kotlin.math.sin
 
 object SightUtil {
 
-    fun getEntitiesInSight(entities: List<Entity>, startPoint: Vec3d, distance: Double, radian: Double, yaw: Double): MutableList<Entity> {
-        val newEntities: MutableList<Entity> = ArrayList<Entity>()
-
-        val startPos2d = intArrayOf(startPoint.x.toInt(), startPoint.z.toInt())
-        val deg2rad = 0.017453292519943295
-        val endPos2d = intArrayOf((distance * cos(yaw * deg2rad - radian / 2)).toInt(), (distance * sin(yaw * deg2rad - radian / 2)).toInt())
-
-        for (entity in entities) {
-            val entityVector: IntArray = getDirectionVector(startPos2d[0], startPos2d[1], entity.blockPos.x, entity.blockPos.y)
-            val angle: Double = getAngleBetweenVectors(endPos2d, entityVector)
-            if (angle in 0.0..radian) newEntities.add(entity)
-        }
-        return newEntities
-    }
-
     private fun getAngleBetweenVectors(vector1: IntArray, vector2: IntArray): Double {
         return atan2(vector2[1], vector2[0]) - atan2(vector1[1], vector1[0])
     }
