@@ -3,7 +3,7 @@ package fp.yeyu.mcdata
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
-class Vec3dRayIter(private val from: Vec3d, private val to: Vec3d): Iterable<BlockPos>, Iterator<BlockPos> {
+class Vec3dRayIter(private val from: Vec3d, private val to: Vec3d) : Iterable<BlockPos>, Iterator<BlockPos> {
 
     var next = false
     var current = BlockPos(from)

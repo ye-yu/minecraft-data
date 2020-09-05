@@ -66,7 +66,8 @@ object CommandUtil {
                                 AttributeUtil.getHotBarCursor(player).also { logger.info("Writing hot bar cursor") },
                                 AttributeUtil.getInventory(player).also { logger.info("Writing inventory") },
                                 AttributeUtil.getVisibleBlocks(player).also { logger.info("Writing visible blocks") },
-                                AttributeUtil.getEndStamp().also { logger.info("Writing end stamp") },)
+                                AttributeUtil.getEndStamp().also { logger.info("Writing end stamp") },
+                        )
                 )
             }
         }

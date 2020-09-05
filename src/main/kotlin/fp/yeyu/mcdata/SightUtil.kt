@@ -7,7 +7,6 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.math.Vec3d
-import java.util.*
 import java.util.stream.IntStream
 import kotlin.math.PI
 import kotlin.math.atan2
