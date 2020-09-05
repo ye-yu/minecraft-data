@@ -12,6 +12,5 @@ object Vec3dRayIterShared : Vec3dRayIter(Vec3d.ZERO, Vec3d.ZERO) {
         this.to = to
         return this
     }
-
-
 }
+

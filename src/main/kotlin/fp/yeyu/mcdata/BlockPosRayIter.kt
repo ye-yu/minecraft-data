@@ -1,19 +1,32 @@
 package fp.yeyu.mcdata
 
 import net.minecraft.util.math.BlockPos
+import kotlin.properties.Delegates
 
-class BlockPosRayIter(private val from: BlockPos, private val to: BlockPos) : Iterable<BlockPos>, Iterator<BlockPos> {
+class BlockPosRayIter(from: BlockPos, to: BlockPos) : Iterable<BlockPos>, Iterator<BlockPos> {
 
     var next = false
-    var current = BlockPos(from)
-    var toBlockPos = BlockPos(to)
-    var directionVector: BlockPos = to.subtract(from)
-    var factor = 1.0 / NumberUtil.max(directionVector.x, directionVector.y, directionVector.z)
+    lateinit var current: BlockPos
+    private lateinit var directionVector: BlockPos
+    private var factor by Delegates.notNull<Double>()
     var multiplier = 0
 
-    override fun iterator(): Iterator<BlockPos> = BlockPosRayIter(from, to)
+    var from = from
+        set(value) {
+            field = value
+            this.current = value
+        }
+    var to = to
+        set(value) {
+            field = value
+            directionVector = value.subtract(from)
+            factor = 1.0 / NumberUtil.max(directionVector.x, directionVector.y, directionVector.z)
+            multiplier = 0
+        }
 
-    override fun hasNext(): Boolean = current != toBlockPos
+    override fun iterator(): Iterator<BlockPos> = this
+
+    override fun hasNext(): Boolean = current != to
 
     override fun next(): BlockPos = BlockPos(from.add(directionVector.multiply(factor * multiplier++))).also { current = it }
 

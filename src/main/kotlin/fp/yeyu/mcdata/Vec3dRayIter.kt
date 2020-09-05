@@ -7,7 +7,7 @@ import kotlin.properties.Delegates
 open class Vec3dRayIter(from: Vec3d, to: Vec3d) : Iterable<BlockPos>, Iterator<BlockPos> {
 
     var next = false
-    private lateinit var current: BlockPos
+    lateinit var current: BlockPos
     private lateinit var toBlockPos: BlockPos
     private lateinit var directionVector: Vec3d
     private var factor by Delegates.notNull<Double>()
@@ -16,18 +16,18 @@ open class Vec3dRayIter(from: Vec3d, to: Vec3d) : Iterable<BlockPos>, Iterator<B
     var from: Vec3d = from
         set(value) {
             field = value
-            current = BlockPos(value)
+            this.current = BlockPos(value)
         }
     var to: Vec3d = to
         set(value) {
             field = value
             toBlockPos = BlockPos(value)
-            value.subtract(from)
+            directionVector = value.subtract(from)
             factor = 1.0 / NumberUtil.max(directionVector.x, directionVector.y, directionVector.z)
             multiplier = 0
         }
 
-    override fun iterator(): Iterator<BlockPos> = Vec3dRayIter(from, to)
+    override fun iterator(): Iterator<BlockPos> = this
 
     override fun hasNext(): Boolean = current != toBlockPos
 
