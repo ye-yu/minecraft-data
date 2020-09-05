@@ -3,7 +3,6 @@
   "package": "fp.yeyu.mcdata.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "KeyBindingMixin"
   ],
   "client": [
   ],
