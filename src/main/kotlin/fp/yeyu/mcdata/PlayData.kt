@@ -1,5 +1,6 @@
 package fp.yeyu.mcdata
 
+import fp.yeyu.mcdata.util.CommandUtil
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
 

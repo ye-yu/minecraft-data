@@ -1,5 +1,7 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.util
 
+import fp.yeyu.mcdata.iteration.BlockPosRayIterShared
+import fp.yeyu.mcdata.iteration.Vec3dRayIterShared
 import net.minecraft.block.Material
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity

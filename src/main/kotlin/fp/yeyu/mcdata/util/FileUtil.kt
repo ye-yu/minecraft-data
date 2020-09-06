@@ -1,4 +1,4 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.util
 
 import java.io.File
 import kotlin.random.Random

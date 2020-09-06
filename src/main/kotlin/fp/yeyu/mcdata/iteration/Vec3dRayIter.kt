@@ -1,5 +1,6 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.iteration
 
+import fp.yeyu.mcdata.util.NumberUtil
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import kotlin.properties.Delegates

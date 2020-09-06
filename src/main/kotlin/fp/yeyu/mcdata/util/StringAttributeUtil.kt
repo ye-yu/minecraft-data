@@ -1,5 +1,6 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.util
 
+import fp.yeyu.mcdata.data.GameKey
 import net.fabricmc.api.EnvType
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.Blocks
@@ -16,8 +17,7 @@ import net.minecraft.world.World
 import java.util.stream.IntStream
 import kotlin.streams.asSequence
 
-object AttributeUtil {
-
+object StringAttributeUtil {
 
     private val isClient: Boolean get() = FabricLoader.getInstance().environmentType == EnvType.CLIENT
     private val envPrefix: String get() = if (isClient) "client: " else "server: "

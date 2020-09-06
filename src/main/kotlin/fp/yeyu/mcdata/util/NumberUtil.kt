@@ -1,4 +1,4 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.util
 
 object NumberUtil {
     fun <T> max(a: T, vararg other: T): T where T : Number, T : Comparable<T> {

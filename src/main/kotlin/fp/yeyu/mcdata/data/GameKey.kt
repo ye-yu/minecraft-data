@@ -1,4 +1,4 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.data
 
 import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.interfaces.ByteSerializable

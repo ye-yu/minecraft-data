@@ -1,5 +1,6 @@
-package fp.yeyu.mcdata
+package fp.yeyu.mcdata.iteration
 
+import fp.yeyu.mcdata.iteration.BlockPosRayIter
 import net.minecraft.util.math.BlockPos
 
 /**
