@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Blocks.class)
 public class BlocksMixin {
-	private static byte currentByte = -127;
+	private static byte currentByte = 0;
 
 	@Inject(method = "register", at = @At("RETURN"))
 	private static void onRegister(String id, Block block, CallbackInfoReturnable<Block> cir) {

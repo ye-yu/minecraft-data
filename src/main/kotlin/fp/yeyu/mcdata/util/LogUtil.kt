@@ -1,6 +1,7 @@
 package fp.yeyu.mcdata.util
 
 import fp.yeyu.mcdata.data.EncodingKey
+import fp.yeyu.mcdata.data.GameKey
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.client.MinecraftClient
@@ -20,11 +21,31 @@ object LogUtil {
         private fun logPlayerByte(player: ServerPlayerEntity, packetByteBuf: PacketByteBuf) {
             val byteBuf = PacketByteBuf(Unpooled.buffer())
             EncodingKey.SERVER.serialize(byteBuf)
-            StringAttributeUtil.writeKeyPressesByte(byteBuf)
+            ByteAttributeUtil.writeTimeStamp(byteBuf)
+            ByteAttributeUtil.writePlayerStats(byteBuf, player)
+            ByteAttributeUtil.parseKeyPresses(packetByteBuf).also {
+                if (it.isNotEmpty()) {
+                    GameKey.encodingKey.serialize(byteBuf)
+                    byteBuf.writeVarInt(it.size)
+                    it.forEach { key -> key.serialize(byteBuf) }
+                }
+            }
+            ByteAttributeUtil.writeVisibleMobs(byteBuf, player)
+            ByteAttributeUtil.writeVisibleBlock(byteBuf, player)
             EncodingKey.END.serialize(byteBuf)
+            val array = byteBuf.array()
+            var pointer = array.size - 1
+            while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
 
-            BufferedOutputStream(FileOutputStream(FileUtil.logDestinationByte)).use {
-                it.write(byteBuf.array())
+            BufferedOutputStream(FileOutputStream(FileUtil.logDestinationByte, true)).use {
+                for(i in 0..pointer) {
+                    it.write(array[i].toInt())
+                }
+//                it.write(byteBuf.array().let { ba ->
+//                    var pointer = ba.size - 1
+//                    while (ba[pointer] == EncodingKey.BUFFER.byte) pointer--
+//                    ba.sliceArray(0..(pointer + 1))
+//                })
             }
         }
 
@@ -76,13 +97,29 @@ object LogUtil {
         fun onLogByteLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = logByte()
 
         private fun logByte() {
-//            val player = MinecraftClient.getInstance().player ?: return
+            val player = MinecraftClient.getInstance().player ?: return
             val byteBuf = PacketByteBuf(Unpooled.buffer())
             EncodingKey.LOCAL.serialize(byteBuf)
-            StringAttributeUtil.writeKeyPressesByte(byteBuf)
+            ByteAttributeUtil.writeTimeStamp(byteBuf)
+            ByteAttributeUtil.writePlayerStats(byteBuf, player)
+            ByteAttributeUtil.writeKeyPresses(byteBuf)
+            ByteAttributeUtil.writeVisibleMobs(byteBuf, player)
+            ByteAttributeUtil.writeVisibleBlock(byteBuf, player)
             EncodingKey.END.serialize(byteBuf)
-            BufferedOutputStream(FileOutputStream(FileUtil.logDestinationByte)).use {
-                it.write(byteBuf.array())
+
+            val array = byteBuf.array()
+            var pointer = array.size - 1
+            while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
+
+            BufferedOutputStream(FileOutputStream(FileUtil.logDestinationByte, true)).use {
+                for(i in 0..pointer) {
+                    it.write(array[i].toInt())
+                }
+//                it.write(byteBuf.array().let { ba ->
+//                    var pointer = ba.size - 1
+//                    while (ba[pointer] == EncodingKey.BUFFER.byte) pointer--
+//                    ba.sliceArray(0..(pointer + 1))
+//                })
             }
         }
 

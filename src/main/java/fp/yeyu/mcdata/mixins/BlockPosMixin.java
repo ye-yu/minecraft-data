@@ -16,7 +16,10 @@ import java.util.Objects;
 public class BlockPosMixin implements ByteSerializable {
 	@Override
 	public void serialize(@NotNull PacketByteBuf buffer) {
-		throw new IllegalStateException("Serialize with a serialization context!");
+		final BlockPos blockPos = (((BlockPos) (Object) this));
+		buffer.writeVarInt(blockPos.getX());
+		buffer.writeVarInt(blockPos.getY());
+		buffer.writeVarInt(blockPos.getZ());
 	}
 
 	@Override

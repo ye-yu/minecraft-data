@@ -55,7 +55,7 @@ object CommandUtil {
                 ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logSender, PacketByteBuf(Unpooled.buffer()).also(StringAttributeUtil::writeKeyPresses))
 
         fun onLogByteInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) =
-                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logByteSender, PacketByteBuf(Unpooled.buffer()).also(StringAttributeUtil::writeKeyPressesByte))
+                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logByteSender, PacketByteBuf(Unpooled.buffer()).also(ByteAttributeUtil::writeKeyPressesEnum))
     }
 
 

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Items.class)
 public class ItemsMixin {
 
-	private static byte currentByte = -127;
+	private static byte currentByte = 0;
 
 	/* todo: export byteId with corresponding item; or use Registry.ITEM.getRawId */
 	@Inject(method="register(Lnet/minecraft/util/Identifier;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;", at = @At("RETURN"))

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(Block.class)
 public class BlockMixin implements ByteIdentifiable {
 
-	private byte byteId = -127;
+	private byte byteId = -1;
 
 	@Override
 	public void setByteId(byte byteId) {

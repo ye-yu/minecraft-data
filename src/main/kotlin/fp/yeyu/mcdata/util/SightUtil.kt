@@ -61,28 +61,16 @@ object SightUtil {
     }
 
     private fun isBlockInFOV(camera: Entity, target: BlockPos): Boolean {
-        println("Checking if $target is in FOV of $camera")
         val startPoint = camera.blockPos
         val distance = 120
         val yaw = camera.yaw
         val radian = PI
         val startPos2d = intArrayOf(startPoint.x, startPoint.z)
-        println("Preparing startPos2d:", startPos2d)
         val deg2rad = 0.017453292519943295
         val endPos2d = intArrayOf((distance * cos(yaw * deg2rad - radian / 2)).toInt(), (distance * sin(yaw * deg2rad - radian / 2)).toInt())
-        println("Preparing endPos2d:", endPos2d)
         val entityVector: IntArray = getDirectionVector(startPos2d[0], startPos2d[1], target.x, target.y)
-        println("Obtaining direction vector:", entityVector)
         val angle = wrapRadian(getAngleBetweenVectors(endPos2d, entityVector))
-        println("Obtaining angle between vectors: $angle")
-        return (angle in 0.0..radian).also {
-            if (it) println("$angle is in the FOV")
-            else println("$angle is not in the FOV")
-        }
-    }
-
-    private fun println(msg: String, arr: IntArray) {
-        println("$msg [${arr.joinToString(",")}]")
+        return angle in 0.0..radian
     }
 
     private fun wrapRadian(rad: Double): Double {
@@ -91,32 +79,24 @@ object SightUtil {
     }
 
     private fun canSeeThroughEntityAt(sourceEntity: Entity, sourcePos: Vec3d, targetPos: Vec3d): Boolean {
-        println("Checking if $sourcePos can see through $targetPos")
         val world = sourceEntity.world
 
         for (rayBlock in Vec3dRayIterShared.new(sourcePos, targetPos)) {
-            println("Block candidate: $rayBlock")
             val block = world.getBlockState(rayBlock)
             if (block.material == Material.AIR) continue
             if (block.isTranslucent(world, rayBlock)) continue
-            println("Block $sourcePos cannot see through $targetPos due to obstacle at $rayBlock")
             return false
         }
-        println("Block $sourcePos can see through $targetPos")
         return true
     }
 
     private fun canSeeThroughBlockAt(world: World, sourcePos: BlockPos, targetPos: BlockPos): Boolean {
-        println("Checking if $sourcePos can see through $targetPos")
         for (rayBlock in BlockPosRayIterShared.new(sourcePos, targetPos)) {
-            println("Block candidate: $rayBlock")
             val block = world.getBlockState(rayBlock)
             if (block.material == Material.AIR) continue
             if (block.isTranslucent(world, rayBlock)) continue
-            println("Block $sourcePos cannot see through $targetPos due to obstacle at $rayBlock")
             return false
         }
-        println("Block $sourcePos can see through $targetPos")
         return true
     }
 

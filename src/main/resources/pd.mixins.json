@@ -4,11 +4,15 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "BlockMixin",
-    "BlocksMixin",
     "BlockPosMixin",
+    "BlocksMixin",
+    "EntityMixin",
+    "EntityTypeMixin",
     "InventoryMixin",
     "ItemMixin",
-    "ItemsMixin"
+    "ItemsMixin",
+    "PlayerEntityMixin",
+    "Vec3dMixin"
   ],
   "client": [
   ],

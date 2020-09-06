@@ -2,7 +2,7 @@ package fp.yeyu.mcdata.data
 
 import net.minecraft.network.PacketByteBuf
 
-enum class EncodingKey(private val byte: Byte) {
+enum class EncodingKey(val byte: Byte) {
     BUFFER(0),
     LOCAL(1),
     SERVER(2),
@@ -15,11 +15,12 @@ enum class EncodingKey(private val byte: Byte) {
     MOBS(9),
     CURSOR(10),
     INVENTORY(11),
-    VISIBLE(12),
+    BLOCKS(12),
     MENU(13),
     MOUSE(14),
     KEYBOARD(15),
-    SLOTS(16),
+    ITEM_SLOTS(16),
+    CURSOR_SLOTS(17),
     END(Byte.MAX_VALUE);
 
     operator fun get(byte: Byte): EncodingKey = values().first { it.byte == byte }

@@ -42,16 +42,6 @@ object StringAttributeUtil {
         buf.writeString(getKeyPresses())
     }
 
-    fun writeKeyPressesByte(buf: PacketByteBuf) {
-        GameKey.values().filter { it.key.isPressed }.also {
-            if (it.isNotEmpty()) {
-                GameKey.encodingKey.serialize(buf)
-                buf.writeVarInt(it.size)
-                it.forEach { key -> key.serialize(buf) }
-            }
-        }
-    }
-
     fun getHotBarCursor(player: PlayerEntity): String = "cursor: ${player.inventory.selectedSlot}"
     fun getVisibleMob(player: PlayerEntity): String {
         fun BlockPos.lowerCorner(distance: Int): BlockPos = BlockPos(this.x - distance, 0, this.z - distance)

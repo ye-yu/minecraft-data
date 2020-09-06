@@ -20,7 +20,6 @@ public class InventoryMixin implements ByteSerializable {
 
 	@Override
 	public void serialize(@NotNull PacketByteBuf buffer) {
-		ByteSerializable.super.serialize(buffer);
 		PlayerInventory inv = (PlayerInventory) (Object) this;
 		final Collection<Pair<Integer, ItemStack>> itemStacks = IntStream
 				.range(0, inv.size())
@@ -29,10 +28,11 @@ public class InventoryMixin implements ByteSerializable {
 				.collect(Collectors.toCollection(ArrayList::new));
 		buffer.writeVarInt(itemStacks.size());
 
-		for(Pair<Integer, ItemStack> pair: itemStacks) {
+		for (Pair<Integer, ItemStack> pair : itemStacks) {
 			buffer.writeVarInt(pair.getFirst());
 			buffer.writeVarInt(pair.getSecond().getCount());
 			buffer.writeByte(((ByteIdentifiable) pair.getSecond().getItem()).getByteId());
 		}
+
 	}
 }
