@@ -14,9 +14,13 @@ import java.io.FileWriter
 @Suppress("UNUSED_PARAMETER")
 object LogUtil {
     object Server {
-        fun logPlayer(context: PacketContext, packetByteBuf: PacketByteBuf) = logPlayer(context.player as ServerPlayerEntity, packetByteBuf)
+        fun logPlayer(context: PacketContext, packetByteBuf: PacketByteBuf) {
+            Thread(PlayDataGroup) { logPlayer(context.player as ServerPlayerEntity, packetByteBuf) }.start()
+        }
 
-        fun logBytePlayer(context: PacketContext, packetByteBuf: PacketByteBuf) = logPlayerByte(context.player as ServerPlayerEntity, packetByteBuf)
+        fun logBytePlayer(context: PacketContext, packetByteBuf: PacketByteBuf) {
+            Thread(PlayDataGroup) { logPlayerByte(context.player as ServerPlayerEntity, packetByteBuf) }.start()
+        }
 
         private fun logPlayerByte(player: ServerPlayerEntity, packetByteBuf: PacketByteBuf) {
             val byteBuf = PacketByteBuf(Unpooled.buffer())
@@ -92,9 +96,9 @@ object LogUtil {
 
     object Client {
 
-        fun onLogLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = logPlayer()
+        fun onLogLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = Thread(PlayDataGroup, this::logPlayer).start()
 
-        fun onLogByteLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = logByte()
+        fun onLogByteLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = Thread(PlayDataGroup, this::logByte).start()
 
         private fun logByte() {
             val player = MinecraftClient.getInstance().player ?: return
