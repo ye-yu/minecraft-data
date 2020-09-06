@@ -3,6 +3,12 @@
   "package": "fp.yeyu.mcdata.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BlockMixin",
+    "BlocksMixin",
+    "BlockPosMixin",
+    "InventoryMixin",
+    "ItemMixin",
+    "ItemsMixin"
   ],
   "client": [
   ],

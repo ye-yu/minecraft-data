@@ -1,23 +1,30 @@
 package fp.yeyu.mcdata.data
 
-enum class EncodingKey(val byte: Byte) {
-    LOCAL(0x0),
-    SERVER(0x1),
-    SYSTEM(0x2),
-    UUID(0x3),
-    POSITION(0x4),
-    ROTATION(0x5),
-    FOCUS(0x6),
-    ACTION(0x7),
-    MOBS(0x8),
-    CURSOR(0x9),
-    INVENTORY(0xA),
-    VISIBLE(0xB),
-    OPENED(0xC),
-    MOUSE(0xD),
-    KEYBOARD(0xE),
-    MENU(0xF),
+import net.minecraft.network.PacketByteBuf
+
+enum class EncodingKey(private val byte: Byte) {
+    BUFFER(0),
+    LOCAL(1),
+    SERVER(2),
+    TIME(3),
+    UUID(4),
+    POSITION(5),
+    ROTATION(6),
+    FOCUS(7),
+    ACTION(8),
+    MOBS(9),
+    CURSOR(10),
+    INVENTORY(11),
+    VISIBLE(12),
+    MENU(13),
+    MOUSE(14),
+    KEYBOARD(15),
+    SLOTS(16),
     END(Byte.MAX_VALUE);
 
     operator fun get(byte: Byte): EncodingKey = values().first { it.byte == byte }
+
+    fun serialize(buf: PacketByteBuf) {
+        buf.writeByte(this.byte.toInt())
+    }
 }

@@ -45,7 +45,7 @@ key - inventory
 value - varint (how many items), varint (slot number), varint (quantity), itemid
 
 key - visible blocks
-value - varint (how many blocks), varint block id, block positions
+value - varint (how many blocks), varint block id, varints block positions
 
 key - opened menu
 value - varint (menu id)

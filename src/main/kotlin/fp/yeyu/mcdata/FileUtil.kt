@@ -8,6 +8,7 @@ object FileUtil {
     private val random = Random(System.currentTimeMillis())
     private const val logDirectory = "playdata-log"
     val logDestination by lazy(FileUtil::createLogDestination)
+    val logDestinationByte by lazy(FileUtil::createLogByteDestination)
 
     private val logDirectoryInstance = File(logDirectory).also {
         if (!it.exists() && it.mkdir()) println("created directory $logDirectory")
@@ -15,5 +16,6 @@ object FileUtil {
     }
 
     private fun createLogDestination(): File = File(logDirectoryInstance, "${random.nextLong()}.log")
+    private fun createLogByteDestination(): File = File(logDirectoryInstance, "${random.nextLong()}.dat")
 
 }
