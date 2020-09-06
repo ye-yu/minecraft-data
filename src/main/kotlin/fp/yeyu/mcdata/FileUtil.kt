@@ -14,6 +14,6 @@ object FileUtil {
         else if (it.isFile) throw FileAlreadyExistsException(it, reason = "$logDirectory already exists and it is a file")
     }
 
-    private fun createLogDestination(): File = File(logDirectoryInstance, "${random.nextLong()}")
+    private fun createLogDestination(): File = File(logDirectoryInstance, "${random.nextLong()}.log")
 
 }

@@ -52,24 +52,48 @@ object CommandUtil {
 
         private fun logPlayer() {
             val player = MinecraftClient.getInstance().player ?: return
-            FileWriter(FileUtil.logDestination, true).use {
-                it.write(
-                        strings = arrayOf(
-                                "Log local",
-                                AttributeUtil.getTimeStamp().also { logger.info("Writing timestamp") },
-                                AttributeUtil.getUUID(player).also { logger.info("Writing uuid") },
-                                AttributeUtil.getBlockPosition(player).also { logger.info("Writing blockPos") },
-                                AttributeUtil.getHeadRotation(player).also { logger.info("Writing headRotation") },
-                                AttributeUtil.getCrossHairBlock(player).also { logger.info("Writing crossHairBlock") },
-                                AttributeUtil.getKeyPresses().also { logger.info("Writing key presses") },
-                                AttributeUtil.getVisibleMob(player).also { logger.info("Writing visible mobs") },
-                                AttributeUtil.getHotBarCursor(player).also { logger.info("Writing hot bar cursor") },
-                                AttributeUtil.getInventory(player).also { logger.info("Writing inventory") },
-                                AttributeUtil.getVisibleBlocks(player).also { logger.info("Writing visible blocks") },
-                                AttributeUtil.getEndStamp().also { logger.info("Writing end stamp") },
-                        )
-                )
-            }
+
+            FileWriter(FileUtil.logDestination, true).also {
+                try {
+                    it.write("Log local")
+                    it.write("\n")
+                    logger.info("Writing timestamp")
+                    it.write(AttributeUtil.getTimeStamp())
+                    it.write("\n")
+                    logger.info("Writing uuid")
+                    it.write(AttributeUtil.getUUID(player))
+                    it.write("\n")
+                    logger.info("Writing blockPos")
+                    it.write(AttributeUtil.getBlockPosition(player))
+                    it.write("\n")
+                    logger.info("Writing headRotation")
+                    it.write(AttributeUtil.getHeadRotation(player))
+                    it.write("\n")
+                    logger.info("Writing crossHairBlock")
+                    it.write(AttributeUtil.getCrossHairBlock(player))
+                    it.write("\n")
+                    logger.info("Writing key presses")
+                    it.write(AttributeUtil.getKeyPresses())
+                    it.write("\n")
+                    logger.info("Writing visible mobs")
+                    it.write(AttributeUtil.getVisibleMob(player))
+                    it.write("\n")
+                    logger.info("Writing hot bar cursor")
+                    it.write(AttributeUtil.getHotBarCursor(player))
+                    it.write("\n")
+                    logger.info("Writing inventory")
+                    it.write(AttributeUtil.getInventory(player))
+                    it.write("\n")
+                    logger.info("Writing visible blocks")
+                    it.write(AttributeUtil.getVisibleBlocks(player))
+                    it.write("\n")
+                    logger.info("Writing end stamp")
+                    it.write(AttributeUtil.getEndStamp())
+                    it.write("\n")
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+            }.close()
         }
 
 
@@ -112,23 +136,47 @@ object CommandUtil {
         fun logPlayer(context: PacketContext, packetByteBuf: PacketByteBuf) = logPlayer(context.player as ServerPlayerEntity, packetByteBuf)
 
         private fun logPlayer(player: ServerPlayerEntity, packetByteBuf: PacketByteBuf) {
-            FileWriter(FileUtil.logDestination, true).use {
-                it.write(
-                        strings = arrayOf(
-                                "Log server",
-                                AttributeUtil.getTimeStamp(),
-                                AttributeUtil.getUUID(player),
-                                AttributeUtil.getBlockPosition(player),
-                                AttributeUtil.getHeadRotation(player),
-                                AttributeUtil.getCrossHairBlock(player),
-                                AttributeUtil.getKeyPresses(packetByteBuf),
-                                AttributeUtil.getVisibleMob(player),
-                                AttributeUtil.getHotBarCursor(player),
-                                AttributeUtil.getInventory(player),
-                                AttributeUtil.getVisibleBlocks(player),
-                                AttributeUtil.getEndStamp())
-                )
-            }
+            FileWriter(FileUtil.logDestination, true).also {
+                try {
+                    it.write("Log server")
+                    it.write("\n")
+                    logger.info("Writing timestamp")
+                    it.write(AttributeUtil.getTimeStamp())
+                    it.write("\n")
+                    logger.info("Writing uuid")
+                    it.write(AttributeUtil.getUUID(player))
+                    it.write("\n")
+                    logger.info("Writing blockPos")
+                    it.write(AttributeUtil.getBlockPosition(player))
+                    it.write("\n")
+                    logger.info("Writing headRotation")
+                    it.write(AttributeUtil.getHeadRotation(player))
+                    it.write("\n")
+                    logger.info("Writing crossHairBlock")
+                    it.write(AttributeUtil.getCrossHairBlock(player))
+                    it.write("\n")
+                    logger.info("Writing key presses")
+                    it.write(AttributeUtil.getKeyPresses())
+                    it.write("\n")
+                    logger.info("Writing visible mobs")
+                    it.write(AttributeUtil.getVisibleMob(player))
+                    it.write("\n")
+                    logger.info("Writing hot bar cursor")
+                    it.write(AttributeUtil.getHotBarCursor(player))
+                    it.write("\n")
+                    logger.info("Writing inventory")
+                    it.write(AttributeUtil.getInventory(player))
+                    it.write("\n")
+                    logger.info("Writing visible blocks")
+                    it.write(AttributeUtil.getVisibleBlocks(player))
+                    it.write("\n")
+                    logger.info("Writing end stamp")
+                    it.write(AttributeUtil.getEndStamp())
+                    it.write("\n")
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+            }.close()
         }
 
     }

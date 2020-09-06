@@ -1,12 +1,11 @@
 package fp.yeyu.mcdata
 
 import net.minecraft.block.Material
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
 import java.util.stream.IntStream
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -28,14 +27,14 @@ object SightUtil {
         return intArrayOf(endX - startX, endY - startY)
     }
 
-    private val indicesArray = IntArray(4) { it }
-    private val boundPermute: Array<IntArray> = IntStream.range(0, 2)
-            .mapToObj { it to indicesArray }
+    private val entityBoundingIndices = IntArray(4) { it }
+    private val entityBoundingPermute: Array<IntArray> = IntStream.range(0, 2)
+            .mapToObj { it to entityBoundingIndices }
             .flatMap { flat ->
                 flat.second.map {
                     intArrayOf(flat.first, it)
                 }.stream()
-            }.map { it to indicesArray }
+            }.map { it to entityBoundingIndices }
             .flatMap { flat ->
                 flat.second.map {
                     intArrayOf(flat.first[0], flat.first[1], it)
@@ -44,44 +43,105 @@ object SightUtil {
                 arrayOfNulls<IntArray>(it)
             }
 
-    fun isEntityVisible(player: PlayerEntity, target: Entity): Boolean {
+    fun isEntityVisible(camera: Entity, target: Entity): Boolean {
         if (target is ClientPlayerEntity) return false
-        val camera = if (player.world.isClient) MinecraftClient.getInstance().cameraEntity
-                ?: return false else (player as ServerPlayerEntity).cameraEntity
         val offset = 0.2
         val xs = arrayOf(target.boundingBox.minX - offset, target.boundingBox.minX, target.boundingBox.maxX, target.boundingBox.maxX + offset)
         val ys = arrayOf(target.boundingBox.minY - offset, target.boundingBox.minY, target.boundingBox.maxY, target.boundingBox.maxY + offset)
         val zs = arrayOf(target.boundingBox.minZ - offset, target.boundingBox.minZ, target.boundingBox.maxZ, target.boundingBox.maxZ + offset)
 
-        return isEntityInSightOf(player, target) && boundPermute.map { Vec3d(xs[it[0]], ys[it[1]], zs[it[2]]) }
+        return isEntityInFOV(camera, target) && entityBoundingPermute.map { Vec3d(xs[it[0]], ys[it[1]], zs[it[2]]) }
                 .any { canSeeThroughEntityAt(target, it, camera.pos) }
     }
 
-    private fun isEntityInSightOf(player: PlayerEntity, target: Entity): Boolean {
-        val camera = if (player.world.isClient) MinecraftClient.getInstance().cameraEntity
-                ?: return false else (player as ServerPlayerEntity).cameraEntity
+    private fun isEntityInFOV(camera: Entity, target: Entity): Boolean {
+        return isBlockInFOV(camera, target.blockPos)
+    }
+
+    private fun isBlockInFOV(camera: Entity, target: BlockPos): Boolean {
+        println("Checking if $target is in FOV of $camera")
         val startPoint = camera.blockPos
-        val distance = 50
+        val distance = 120
         val yaw = camera.yaw
         val radian = PI
         val startPos2d = intArrayOf(startPoint.x, startPoint.z)
+        println("Preparing startPos2d:", startPos2d)
         val deg2rad = 0.017453292519943295
         val endPos2d = intArrayOf((distance * cos(yaw * deg2rad - radian / 2)).toInt(), (distance * sin(yaw * deg2rad - radian / 2)).toInt())
+        println("Preparing endPos2d:", endPos2d)
+        val entityVector: IntArray = getDirectionVector(startPos2d[0], startPos2d[1], target.x, target.y)
+        println("Obtaining direction vector:", entityVector)
+        val angle = wrapRadian(getAngleBetweenVectors(endPos2d, entityVector))
+        println("Obtaining angle between vectors: $angle")
+        return (angle in 0.0..radian).also {
+            if (it) println("$angle is in the FOV")
+            else println("$angle is not in the FOV")
+        }
+    }
 
-        val entityVector: IntArray = getDirectionVector(startPos2d[0], startPos2d[1], target.blockPos.x, target.blockPos.y)
-        val angle: Double = getAngleBetweenVectors(endPos2d, entityVector)
-        return angle in 0.0..radian
+    private fun println(msg: String, arr: IntArray) {
+        println("$msg [${arr.joinToString(",")}]")
+    }
+
+    private fun wrapRadian(rad: Double): Double {
+        if (rad > PI) return wrapRadian(rad - PI)
+        return rad
     }
 
     private fun canSeeThroughEntityAt(sourceEntity: Entity, sourcePos: Vec3d, targetPos: Vec3d): Boolean {
+        println("Checking if $sourcePos can see through $targetPos")
         val world = sourceEntity.world
 
         for (rayBlock in Vec3dRayIterShared.new(sourcePos, targetPos)) {
+            println("Block candidate: $rayBlock")
             val block = world.getBlockState(rayBlock)
             if (block.material == Material.AIR) continue
             if (block.isTranslucent(world, rayBlock)) continue
+            println("Block $sourcePos cannot see through $targetPos due to obstacle at $rayBlock")
             return false
         }
+        println("Block $sourcePos can see through $targetPos")
         return true
     }
+
+    private fun canSeeThroughBlockAt(world: World, sourcePos: BlockPos, targetPos: BlockPos): Boolean {
+        println("Checking if $sourcePos can see through $targetPos")
+        for (rayBlock in BlockPosRayIterShared.new(sourcePos, targetPos)) {
+            println("Block candidate: $rayBlock")
+            val block = world.getBlockState(rayBlock)
+            if (block.material == Material.AIR) continue
+            if (block.isTranslucent(world, rayBlock)) continue
+            println("Block $sourcePos cannot see through $targetPos due to obstacle at $rayBlock")
+            return false
+        }
+        println("Block $sourcePos can see through $targetPos")
+        return true
+    }
+
+    private val blockIndices = IntArray(2) { it }
+    private val blockCornerPermute: Array<IntArray> = IntStream.range(0, 2)
+            .mapToObj { it to blockIndices }
+            .flatMap { flat ->
+                flat.second.map {
+                    intArrayOf(flat.first, it)
+                }.stream()
+            }.map { it to blockIndices }
+            .flatMap { flat ->
+                flat.second.map {
+                    intArrayOf(flat.first[0], flat.first[1], it)
+                }.stream()
+            }.toArray {
+                arrayOfNulls<IntArray>(it)
+            }
+
+    fun isBlockVisible(camera: Entity, targetPos: BlockPos): Boolean {
+        val xs = arrayOf(targetPos.x, targetPos.x + 1)
+        val ys = arrayOf(targetPos.y, targetPos.y + 1)
+        val zs = arrayOf(targetPos.z, targetPos.z + 1)
+
+        return isBlockInFOV(camera, targetPos) && blockCornerPermute
+                .map { BlockPos(xs[it[0]], ys[it[1]], zs[it[2]]) }
+                .any { canSeeThroughBlockAt(camera.world, camera.blockPos, it) }
+    }
+
 }

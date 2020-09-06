@@ -1,0 +1,4 @@
+accessWidener   v1  named
+accessible    method    net/minecraft/util/math/Vec3i    setX    (I)V
+accessible    method    net/minecraft/util/math/Vec3i    setY    (I)V
+accessible    method    net/minecraft/util/math/Vec3i    setZ    (I)V

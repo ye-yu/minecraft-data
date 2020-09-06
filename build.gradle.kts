@@ -18,7 +18,7 @@ repositories {
 }
 
 minecraft {
-
+  accessWidener("src/main/resources/playdata.accesswidener")
 }
 
 dependencies {

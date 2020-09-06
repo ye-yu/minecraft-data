@@ -36,6 +36,7 @@
     "fabric-language-kotlin": ">=$kotlinVersion",
     "minecraft": "$minecraftVersion"
   },
+  "accessWidener" : "playdata.accesswidener",
   "suggests": {
     "flamingo": "*"
   }
