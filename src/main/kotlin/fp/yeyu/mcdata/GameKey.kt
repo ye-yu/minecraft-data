@@ -1,9 +1,12 @@
 package fp.yeyu.mcdata
 
+import fp.yeyu.mcdata.data.EncodingKey
+import fp.yeyu.mcdata.interfaces.ByteSerializable
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.KeyBinding
+import net.minecraft.network.PacketByteBuf
 
-enum class GameKey(keySupplier: () -> KeyBinding) {
+enum class GameKey(keySupplier: () -> KeyBinding) : ByteSerializable {
     KEY_ATTACK({ MinecraftClient.getInstance().options.keyAttack }),
     KEY_USE({ MinecraftClient.getInstance().options.keyUse }),
     KEY_FORWARD({ MinecraftClient.getInstance().options.keyForward }),
@@ -39,4 +42,11 @@ enum class GameKey(keySupplier: () -> KeyBinding) {
     KEY_HOTBAR_9({ MinecraftClient.getInstance().options.keysHotbar[8] });
 
     val key: KeyBinding by lazy { keySupplier() }
+
+    override fun serialize(buffer: PacketByteBuf) {
+        super.serialize(buffer)
+        buffer.writeVarInt(this.ordinal)
+    }
+
+    override fun getKey(): EncodingKey = EncodingKey.ACTION
 }

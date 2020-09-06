@@ -156,7 +156,7 @@ object CommandUtil {
                     it.write(AttributeUtil.getCrossHairBlock(player))
                     it.write("\n")
                     logger.info("Writing key presses")
-                    it.write(AttributeUtil.getKeyPresses())
+                    it.write(AttributeUtil.getKeyPresses(packetByteBuf))
                     it.write("\n")
                     logger.info("Writing visible mobs")
                     it.write(AttributeUtil.getVisibleMob(player))

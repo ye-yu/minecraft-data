@@ -1,0 +1,57 @@
+header
+
+0x00 local
+0x01 server
+
+keys
+
+0x02 system time
+0x03 uuid (appears once in client)
+0x04 current position
+0x05 head rotation
+0x06 cross hair block
+0x07 game key
+0x08 mobs
+0x09 cursor
+0x0A inventory
+0x0B visible blocks
+0x0C opened menu
+0x0D cursor x & y (only if menu is opened)
+0x0E menu inventory (if any)
+0xFF end
+
+key - uuid
+value - long long
+
+key - current position
+value - double to long, double to long, double to long
+
+key - head rotation
+value - double to long, double to long
+
+key - cross hair block
+value - block id, varint, varint, varint
+
+key - game key
+value - varint (how many key are pressed), varint...
+
+key - mobs
+value - varint (how many mobs), mobid, mob position
+
+key - cursor
+value - varint
+
+key - inventory
+value - varint (how many items), varint (slot number), varint (quantity), itemid
+
+key - visible blocks
+value - varint (how many blocks), varint block id, block positions
+
+key - opened menu
+value - varint (menu id)
+
+key - cursor x and y
+value - double to long, double to long
+
+key - menu inventory
+value - varint (how many items), varint (slot number), varint (quantity), itemid
