@@ -13,7 +13,7 @@ object BlocksByteParser : ByteParser {
         repeat(size) {
             jsonWriter.beginObject()
             jsonWriter.name("block_ordinal")
-            jsonWriter.value(buf.readByte())
+            jsonWriter.value(buf.readVarInt())
             jsonWriter.name("position")
 
             run {

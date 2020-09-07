@@ -52,12 +52,11 @@ object CommandUtil {
 
     object Client {
         fun onLogInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) =
-                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logSender, PacketByteBuf(Unpooled.buffer()).also(StringAttributeUtil::writeKeyPresses))
+                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logSender, PacketByteBuf(Unpooled.buffer()).apply(StringAttributeUtil::writeKeyPresses))
 
         fun onLogByteInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) =
-                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logByteSender, PacketByteBuf(Unpooled.buffer()).also(ByteAttributeUtil::writeKeyPressesEnum))
+                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logByteSender, PacketByteBuf(Unpooled.buffer()).apply(ByteAttributeUtil::writeKeyPressesEnum))
     }
-
 
     object Server {
         fun requestInfoCommand(context: CommandContext<out ServerCommandSource>): Int {

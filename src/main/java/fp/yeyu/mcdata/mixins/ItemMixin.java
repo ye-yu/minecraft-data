@@ -1,21 +1,21 @@
 package fp.yeyu.mcdata.mixins;
 
-import fp.yeyu.mcdata.interfaces.ByteIdentifiable;
+import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import net.minecraft.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Item.class)
-public class ItemMixin implements ByteIdentifiable {
+public class ItemMixin implements ShortIdentifiable {
 
-	private byte byteId = -1;
+	private short shortId = -1;
 
 	@Override
-	public void setByteId(byte byteId) {
-		this.byteId = byteId;
+	public void setShortId(short shortId) {
+		this.shortId = shortId;
 	}
 
 	@Override
-	public byte getByteId() {
-		return byteId;
+	public short getShortId() {
+		return shortId;
 	}
 }

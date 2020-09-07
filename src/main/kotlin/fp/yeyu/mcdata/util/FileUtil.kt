@@ -6,7 +6,7 @@ import kotlin.random.Random
 object FileUtil {
 
     private val random = Random(System.currentTimeMillis())
-    private const val logDirectory = "playdata-log"
+    const val logDirectory = "playdata-log"
     val logDestination by lazy(FileUtil::createLogDestination)
     val logDestinationByte by lazy(FileUtil::createLogByteDestination)
 

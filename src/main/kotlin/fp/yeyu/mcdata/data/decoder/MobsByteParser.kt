@@ -19,7 +19,7 @@ object MobsByteParser : ByteParser {
     private fun retrieveMobInfo(buf: PacketByteBuf, jsonWriter: JsonWriter) {
         jsonWriter.beginObject()
         jsonWriter.name("mob_ordinal")
-        jsonWriter.value(buf.readByte())
+        jsonWriter.value(buf.readVarInt())
         jsonWriter.name("position")
 
         run {

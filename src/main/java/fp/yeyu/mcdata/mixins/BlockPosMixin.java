@@ -1,6 +1,6 @@
 package fp.yeyu.mcdata.mixins;
 
-import fp.yeyu.mcdata.interfaces.ByteIdentifiable;
+import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
 import net.minecraft.block.BlockState;
@@ -27,8 +27,8 @@ public class BlockPosMixin implements ByteSerializable {
 		final World world = context.getWorld();
 		final BlockPos blockPos = (((BlockPos) (Object) this));
 		final BlockState blockState = Objects.requireNonNull(world).getBlockState((((BlockPos) (Object) this)));
-		final ByteIdentifiable block = (ByteIdentifiable) blockState.getBlock();
-		buffer.writeByte(block.getByteId());
+		final ShortIdentifiable block = (ShortIdentifiable) blockState.getBlock();
+		buffer.writeVarInt(block.getShortId());
 		buffer.writeVarInt(blockPos.getX());
 		buffer.writeVarInt(blockPos.getY());
 		buffer.writeVarInt(blockPos.getZ());

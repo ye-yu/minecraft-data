@@ -2,8 +2,10 @@ package fp.yeyu.mcdata.test
 
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.EncodingKey
+import fp.yeyu.mcdata.data.decoder.Decoder
 import io.netty.buffer.Unpooled
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.util.registry.Registry
 import java.io.File
 import java.io.FileWriter
 
@@ -30,19 +32,7 @@ object DecodingTest {
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
                 jsonWriter.setIndent("  ")
-                jsonWriter.beginObject()
-                jsonWriter.name("data")
-                jsonWriter.beginArray()
-
-                do {
-                    val readByte: Byte = buf.readByte()
-                    if (readByte == EncodingKey.EOF.byte) break
-
-                    EncodingKey[readByte].byteParser?.decode(buf, jsonWriter)
-                } while (true)
-
-                jsonWriter.endArray()
-                jsonWriter.endObject()
+                Decoder.decode(buf, jsonWriter)
             }
         }
     }
@@ -55,20 +45,7 @@ object DecodingTest {
             EncodingKey.EOF.serialize(buf)
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
-                jsonWriter.setIndent("  ")
-                jsonWriter.beginObject()
-                jsonWriter.name("data")
-                jsonWriter.beginArray()
-
-                do {
-                    val readByte: Byte = buf.readByte()
-                    if (readByte == EncodingKey.EOF.byte) break
-
-                    EncodingKey[readByte].byteParser?.decode(buf, jsonWriter)
-                } while (true)
-
-                jsonWriter.endArray()
-                jsonWriter.endObject()
+                Decoder.decode(buf, jsonWriter)
             }
         }
     }

@@ -10,7 +10,7 @@ object FocusByteParser : ByteParser {
         run {
             jsonWriter.beginObject()
             jsonWriter.name("block_ordinal")
-            jsonWriter.value(buf.readByte())
+            jsonWriter.value(buf.readVarInt())
             jsonWriter.name("block_position")
 
             run {

@@ -16,7 +16,7 @@ object InventoryByteParser : ByteParser {
             jsonWriter.name("count")
             jsonWriter.value(buf.readVarInt())
             jsonWriter.name("item_ordinal")
-            jsonWriter.value(buf.readByte())
+            jsonWriter.value(buf.readVarInt())
             jsonWriter.endObject()
         }
         jsonWriter.endArray()
