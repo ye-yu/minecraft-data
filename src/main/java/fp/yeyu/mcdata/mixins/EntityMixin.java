@@ -1,9 +1,7 @@
 package fp.yeyu.mcdata.mixins;
 
-import fp.yeyu.mcdata.data.EncodingKey;
 import fp.yeyu.mcdata.interfaces.ByteIdentifiable;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
-import net.fabricmc.fabric.impl.object.builder.FabricEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

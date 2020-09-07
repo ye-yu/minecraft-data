@@ -44,7 +44,7 @@ enum class GameKey(keySupplier: () -> KeyBinding) : ByteSerializable {
     val key: KeyBinding by lazy { keySupplier() }
 
     override fun serialize(buffer: PacketByteBuf) {
-        buffer.writeVarInt(this.ordinal)
+        buffer.writeEnumConstant(this)
     }
 
     companion object {

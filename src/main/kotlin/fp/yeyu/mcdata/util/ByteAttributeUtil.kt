@@ -52,13 +52,17 @@ object ByteAttributeUtil {
 
     fun writeKeyPressesEnum(buf: PacketByteBuf) {
         GameKey.values().filter { it.key.isPressed }.also {
-            buf.writeVarInt(it.size)
-            it.forEach(buf::writeEnumConstant)
+            buf.writeBoolean(it.isNotEmpty())
+            if (it.isNotEmpty()) {
+                buf.writeVarInt(it.size)
+                it.forEach(buf::writeEnumConstant)
+            }
         }
     }
 
     fun parseKeyPresses(buf: PacketByteBuf): MutableList<GameKey> {
         val arr = mutableListOf<GameKey>()
+        if (!buf.readBoolean()) return arr
         for (i in 0 until buf.readVarInt()) {
             arr += buf.readEnumConstant(GameKey::class.java)
         }

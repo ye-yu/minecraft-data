@@ -41,15 +41,10 @@ object LogUtil {
             var pointer = array.size - 1
             while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
 
-            BufferedOutputStream(FileOutputStream(FileUtil.logDestinationByte, true)).use {
+            FileOutputStream(FileUtil.logDestinationByte, true).use {
                 for(i in 0..pointer) {
                     it.write(array[i].toInt())
                 }
-//                it.write(byteBuf.array().let { ba ->
-//                    var pointer = ba.size - 1
-//                    while (ba[pointer] == EncodingKey.BUFFER.byte) pointer--
-//                    ba.sliceArray(0..(pointer + 1))
-//                })
             }
         }
 
@@ -115,15 +110,10 @@ object LogUtil {
             var pointer = array.size - 1
             while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
 
-            BufferedOutputStream(FileOutputStream(FileUtil.logDestinationByte, true)).use {
+            FileOutputStream(FileUtil.logDestinationByte, true).use {
                 for(i in 0..pointer) {
                     it.write(array[i].toInt())
                 }
-//                it.write(byteBuf.array().let { ba ->
-//                    var pointer = ba.size - 1
-//                    while (ba[pointer] == EncodingKey.BUFFER.byte) pointer--
-//                    ba.sliceArray(0..(pointer + 1))
-//                })
             }
         }
 
