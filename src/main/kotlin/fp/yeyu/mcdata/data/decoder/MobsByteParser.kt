@@ -23,7 +23,7 @@ object MobsByteParser : ByteParser {
         jsonWriter.beginObject()
         jsonWriter.name("mob_id")
         val mobId = buf.readVarInt()
-        if(PlayData.configuration.useRawId) {
+        if (PlayData.configuration.useRawId) {
             jsonWriter.value(mobId)
         } else {
             Bootstrap.initialize()

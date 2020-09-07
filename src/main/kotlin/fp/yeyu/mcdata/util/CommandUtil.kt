@@ -48,7 +48,7 @@ object CommandUtil {
         commandDispatcher.register(CommandManager.literal("logbyte").executes(Server::requestByteInfoCommand))
         commandDispatcher.register(CommandManager.literal("loglocal").executes(Server::requestLogLocalCommand))
         commandDispatcher.register(CommandManager.literal("logbytelocal").executes(Server::requestLogByteLocalCommand))
-        commandDispatcher.register(CommandManager.literal("exportmapping").executes{ OrdinalMapperUtil.exportRawIds() })
+        commandDispatcher.register(CommandManager.literal("exportmapping").executes { OrdinalMapperUtil.exportRawIds() })
     }
 
     object Client {

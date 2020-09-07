@@ -1,7 +1,7 @@
 package fp.yeyu.mcdata.mixins;
 
-import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
+import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

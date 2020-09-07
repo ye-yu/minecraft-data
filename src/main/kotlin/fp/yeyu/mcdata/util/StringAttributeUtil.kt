@@ -87,7 +87,7 @@ object StringAttributeUtil {
     /* todo: mixin so that no longer use .up() */
     private fun getUpwardBlock(world: World, contextBlockPos: BlockPos.Mutable, camera: Entity): String? {
         var toImmutable = contextBlockPos.toImmutable()
-        while(toImmutable.y != 250) {
+        while (toImmutable.y != 250) {
             val blockState = world.getBlockState(toImmutable)
             if (blockState.isAir) {
                 toImmutable = toImmutable.up()
@@ -101,7 +101,7 @@ object StringAttributeUtil {
     /* todo: mixin so that no longer use .down() */
     private fun getDownwardBlock(world: World, contextBlockPos: BlockPos.Mutable, camera: Entity): String? {
         var toImmutable = contextBlockPos.toImmutable()
-        while(toImmutable.y != 0) {
+        while (toImmutable.y != 0) {
             val blockState = world.getBlockState(toImmutable)
             if (blockState.isAir) {
                 toImmutable = toImmutable.down()

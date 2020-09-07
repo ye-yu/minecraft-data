@@ -22,7 +22,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements ByteSerializable, SerializationContext {
-	@Shadow @Final public PlayerInventory inventory;
+	@Shadow
+	@Final
+	public PlayerInventory inventory;
 
 	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);

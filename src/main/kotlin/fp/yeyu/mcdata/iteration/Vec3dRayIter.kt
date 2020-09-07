@@ -27,7 +27,7 @@ open class Vec3dRayIter(from: Vec3d, to: Vec3d) : Iterable<BlockPos>, Iterator<B
             factor = 1.0 / NumberUtil.max(directionVector.x, directionVector.y, directionVector.z)
             multiplier = 0
         }
-    
+
     private val isOutOfRange: Boolean
         get() = when {
             (current.x - from.x) > (to.x - from.x) -> true
@@ -45,7 +45,7 @@ open class Vec3dRayIter(from: Vec3d, to: Vec3d) : Iterable<BlockPos>, Iterator<B
         it.y = (from.y * directionVector.y * factor * multiplier).toInt()
         it.z = (from.z * directionVector.z * factor * multiplier).toInt()
         multiplier++
-        
+
         if (isOutOfRange) {
             current.set(toBlockPos)
         }

@@ -4,7 +4,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public interface SerializationContext {
-	@Nullable default World getWorld() {
+	@Nullable
+	default World getWorld() {
 		return null;
 	}
 }

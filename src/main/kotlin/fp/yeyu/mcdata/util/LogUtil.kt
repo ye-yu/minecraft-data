@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
-import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.FileWriter
 
@@ -42,7 +41,7 @@ object LogUtil {
             while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
 
             FileOutputStream(FileUtil.logDestinationByte, true).use {
-                for(i in 0..pointer) {
+                for (i in 0..pointer) {
                     it.write(array[i].toInt())
                 }
             }
@@ -111,7 +110,7 @@ object LogUtil {
             while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
 
             FileOutputStream(FileUtil.logDestinationByte, true).use {
-                for(i in 0..pointer) {
+                for (i in 0..pointer) {
                     it.write(array[i].toInt())
                 }
             }
