@@ -38,7 +38,7 @@ object DecodingTest {
                     val readByte: Byte = buf.readByte()
                     if (readByte == EncodingKey.EOF.byte) break
 
-                    EncodingKey[readByte].decoder?.decode(buf, jsonWriter)
+                    EncodingKey[readByte].byteParser?.decode(buf, jsonWriter)
                 } while (true)
 
                 jsonWriter.endArray()
@@ -64,7 +64,7 @@ object DecodingTest {
                     val readByte: Byte = buf.readByte()
                     if (readByte == EncodingKey.EOF.byte) break
 
-                    EncodingKey[readByte].decoder?.decode(buf, jsonWriter)
+                    EncodingKey[readByte].byteParser?.decode(buf, jsonWriter)
                 } while (true)
 
                 jsonWriter.endArray()

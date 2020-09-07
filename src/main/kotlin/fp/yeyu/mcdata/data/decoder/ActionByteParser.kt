@@ -4,7 +4,7 @@ import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.GameKey
 import net.minecraft.network.PacketByteBuf
 
-object ActionDecoder : Decoder {
+object ActionByteParser : ByteParser {
     override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
         jsonWriter.name("action")
 

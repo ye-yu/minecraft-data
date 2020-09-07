@@ -4,29 +4,29 @@ import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.decoder.*
 import net.minecraft.network.PacketByteBuf
 
-enum class EncodingKey(val byte: Byte, val decoder: Decoder? = object : Decoder {
+enum class EncodingKey(val byte: Byte, val byteParser: ByteParser? = object : ByteParser {
     override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
     }
 }) {
     BUFFER(0),
-    LOCAL(1, LocalDecoder),
-    SERVER(2, ServerDecoder),
-    TIME(3, TimestampDecoder),
-    UUID(4, UUIDDecoder),
-    POSITION(5, PositionDecoder),
-    ROTATION(6, RotationDecoder),
-    FOCUS(7, FocusDecoder),
-    ACTION(8, ActionDecoder),
-    MOBS(9, MobsDecoder),
-    CURSOR(10, HotBarCursorDecoder),
-    INVENTORY(11, InventoryDecoder),
-    BLOCKS(12, BlocksDecoder),
+    LOCAL(1, LocalByteParser),
+    SERVER(2, ServerByteParser),
+    TIME(3, TimestampByteParser),
+    UUID(4, UUIDByteParser),
+    POSITION(5, PositionByteParser),
+    ROTATION(6, RotationByteParser),
+    FOCUS(7, FocusByteParser),
+    ACTION(8, ActionByteParser),
+    MOBS(9, MobsByteParser),
+    CURSOR(10, HotBarCursorByteParser),
+    INVENTORY(11, InventoryByteParser),
+    BLOCKS(12, BlocksByteParser),
     MENU(13),
     MOUSE(14),
     KEYBOARD(15),
     ITEM_SLOTS(16),
     CURSOR_SLOTS(17),
-    END(Byte.MAX_VALUE, EndDecoder),
+    END(Byte.MAX_VALUE, EndByteParser),
     EOF(-1);
 
     companion object {
