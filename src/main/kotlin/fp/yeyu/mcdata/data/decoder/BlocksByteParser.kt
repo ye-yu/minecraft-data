@@ -1,7 +1,10 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
+import fp.yeyu.mcdata.PlayData
+import net.minecraft.Bootstrap
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.util.registry.Registry
 
 object BlocksByteParser : ByteParser {
     override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
@@ -12,8 +15,17 @@ object BlocksByteParser : ByteParser {
         jsonWriter.beginArray()
         repeat(size) {
             jsonWriter.beginObject()
-            jsonWriter.name("block_ordinal")
-            jsonWriter.value(buf.readVarInt())
+            jsonWriter.name("block_id")
+
+            val blockId = buf.readVarInt()
+            if (PlayData.configuration.useRawId) {
+                jsonWriter.value(blockId)
+            } else {
+                Bootstrap.initialize()
+                val block = Registry.BLOCK.get(blockId)
+                val id = Registry.BLOCK.getId(block)
+                jsonWriter.value(id.toString())
+            }
             jsonWriter.name("position")
 
             run {

@@ -30,7 +30,7 @@ public class InventoryMixin implements ByteSerializable {
 		for (Pair<Integer, ItemStack> pair : itemStacks) {
 			buffer.writeVarInt(pair.getFirst());
 			buffer.writeVarInt(pair.getSecond().getCount());
-			buffer.writeVarInt(((ShortIdentifiable) pair.getSecond().getItem()).getShortId());
+			buffer.writeVarInt(((ShortIdentifiable) pair.getSecond().getItem()).getSelfRawId());
 		}
 
 	}

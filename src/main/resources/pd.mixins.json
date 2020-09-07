@@ -5,12 +5,10 @@
   "mixins": [
     "BlockMixin",
     "BlockPosMixin",
-    "BlocksMixin",
     "EntityMixin",
     "EntityTypeMixin",
     "InventoryMixin",
     "ItemMixin",
-    "ItemsMixin",
     "PlayerEntityMixin",
     "Vec3dMixin"
   ],

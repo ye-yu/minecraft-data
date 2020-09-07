@@ -36,7 +36,9 @@ dependencies {
   includeApi(Jetbrains.Kotlin.annotations)
   includeApi(Jetbrains.Kotlinx.coroutines)
   includeApi(Jetbrains.Kotlinx.coroutinesCore)
-  includeApi(Jetbrains.Kotlinx.serialization)
+  implementation(Jetbrains.Kotlinx.serializationCore)
+  include(Jetbrains.Kotlinx.serializationCore)
+//  includeApi(Jetbrains.Kotlinx.serialization)
 }
 
 tasks {

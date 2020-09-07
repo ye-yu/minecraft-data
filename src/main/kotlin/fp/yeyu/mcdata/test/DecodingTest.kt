@@ -5,7 +5,6 @@ import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.data.decoder.Decoder
 import io.netty.buffer.Unpooled
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.util.registry.Registry
 import java.io.File
 import java.io.FileWriter
 
@@ -45,10 +44,26 @@ object DecodingTest {
             EncodingKey.EOF.serialize(buf)
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
+                jsonWriter.setIndent("  ")
                 Decoder.decode(buf, jsonWriter)
             }
         }
     }
+
+    fun readSession1() {
+        val destination = File(directoryName, "session1-dat.json")
+        getResourceStream("/test/session1.dat").use {
+            val bytes = it.readBytes()
+            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes)
+            EncodingKey.EOF.serialize(buf)
+
+            JsonWriter(FileWriter(destination)).use { jsonWriter ->
+                jsonWriter.setIndent("  ")
+                Decoder.decode(buf, jsonWriter)
+            }
+        }
+    }
+
 
     private fun PacketByteBuf.load(bytes: ByteArray): PacketByteBuf {
         writeBytes(bytes)
@@ -60,4 +75,5 @@ fun main() {
     DecodingTest.prepare()
     DecodingTest.readSimpleLocal()
     DecodingTest.readTwoLocal()
+    DecodingTest.readSession1()
 }

@@ -28,7 +28,7 @@ public class BlockPosMixin implements ByteSerializable {
 		final BlockPos blockPos = (((BlockPos) (Object) this));
 		final BlockState blockState = Objects.requireNonNull(world).getBlockState((((BlockPos) (Object) this)));
 		final ShortIdentifiable block = (ShortIdentifiable) blockState.getBlock();
-		buffer.writeVarInt(block.getShortId());
+		buffer.writeVarInt(block.getSelfRawId());
 		buffer.writeVarInt(blockPos.getX());
 		buffer.writeVarInt(blockPos.getY());
 		buffer.writeVarInt(blockPos.getZ());

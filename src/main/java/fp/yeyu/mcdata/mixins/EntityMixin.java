@@ -18,7 +18,7 @@ public abstract class EntityMixin extends Entity implements ByteSerializable {
 
 	@Override
 	public void serialize(@NotNull PacketByteBuf buffer) {
-		final short byteId = ((ShortIdentifiable) getType()).getShortId();
+		final int byteId = ((ShortIdentifiable) getType()).getSelfRawId();
 		buffer.writeVarInt(byteId);
 		((ByteSerializable) getPos()).serialize(buffer);
 	}

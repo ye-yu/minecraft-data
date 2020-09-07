@@ -1,7 +1,10 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
+import fp.yeyu.mcdata.PlayData
+import net.minecraft.Bootstrap
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.util.registry.Registry
 
 object InventoryByteParser : ByteParser {
     override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
@@ -15,8 +18,18 @@ object InventoryByteParser : ByteParser {
             jsonWriter.value(buf.readVarInt())
             jsonWriter.name("count")
             jsonWriter.value(buf.readVarInt())
-            jsonWriter.name("item_ordinal")
-            jsonWriter.value(buf.readVarInt())
+            jsonWriter.name("item_id")
+
+            val itemId = buf.readVarInt()
+
+            if (PlayData.configuration.useRawId) {
+                jsonWriter.value(itemId)
+            } else {
+                Bootstrap.initialize()
+                val item = Registry.ITEM[itemId]
+                val id = Registry.ITEM.getId(item)
+                jsonWriter.value(id.toString())
+            }
             jsonWriter.endObject()
         }
         jsonWriter.endArray()
