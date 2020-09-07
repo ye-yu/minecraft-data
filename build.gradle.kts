@@ -109,4 +109,3 @@ fun DependencyHandlerScope.includeApi(notation: String) {
   include(notation)
   modApi(notation)
 }
-

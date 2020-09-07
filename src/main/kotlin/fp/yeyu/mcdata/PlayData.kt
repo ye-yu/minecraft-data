@@ -28,5 +28,4 @@ object PlayData : ModInitializer, ClientModInitializer {
     override fun onInitializeClient() {
         CommandUtil.initClient()
     }
-
 }
