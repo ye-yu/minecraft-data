@@ -1,18 +1,33 @@
 package fp.yeyu.mcdata.util
 
 import java.io.File
+import java.io.IOException
 import kotlin.random.Random
 
 object FileUtil {
 
     private val random = Random(System.currentTimeMillis())
-    const val logDirectory = "playdata-log"
+    private const val modDirectory = "./mods/"
+    private const val logDirectory = "log"
     val logDestination by lazy(FileUtil::createLogDestination)
     val logDestinationByte by lazy(FileUtil::createLogByteDestination)
 
-    private val logDirectoryInstance = File(logDirectory).also {
-        if (!it.exists() && it.mkdir()) println("created directory $logDirectory")
-        else if (it.isFile) throw FileAlreadyExistsException(it, reason = "$logDirectory already exists and it is a file")
+
+    val logDirectoryInstance = File(modDirectory, logDirectory).also {
+        createDirsOrFailIfNotExists(it)
+    }
+
+    val configDirectoryInstance = File(modDirectory).also {
+        createDirsOrFailIfNotExists(it)
+    }
+
+    private fun createDirsOrFailIfNotExists(file: File) {
+        if (file.exists()) {
+            if (file.isFile) throw FileAlreadyExistsException(file)
+            else return
+        }
+        if (file.mkdirs()) return
+        throw IOException("Cannot create recursive directory of $file")
     }
 
     private fun createLogDestination(): File = File(logDirectoryInstance, "${random.nextLong()}.log")

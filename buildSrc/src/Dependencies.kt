@@ -10,7 +10,7 @@ object Jetbrains {
   }
 
   object Kotlinx {
-    const val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9"
+    const val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
     const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9"
     const val serializationCore = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC"
     const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
@@ -28,7 +28,7 @@ object Fabric {
   }
 
   object Loader {
-    const val version = "0.9.2+build.+" // https://maven.fabricmc.net/net/fabricmc/fabric-loader/
+    const val version = "0.9.3+build.+" // https://maven.fabricmc.net/net/fabricmc/fabric-loader/
   }
 
   object API {

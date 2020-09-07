@@ -31,13 +31,11 @@ dependencies {
 
   modImplementation(Mods.modmenu)
 
-  includeApi(Jetbrains.Kotlin.stdLib)
-  includeApi(Jetbrains.Kotlin.reflect)
-  includeApi(Jetbrains.Kotlin.annotations)
-  includeApi(Jetbrains.Kotlinx.coroutines)
-  includeApi(Jetbrains.Kotlinx.coroutinesCore)
-  implementation(Jetbrains.Kotlinx.serializationCore)
-  include(Jetbrains.Kotlinx.serializationCore)
+//  includeApi(Jetbrains.Kotlin.stdLib)
+//  includeApi(Jetbrains.Kotlin.reflect)
+//  includeApi(Jetbrains.Kotlin.annotations)
+//  includeApi(Jetbrains.Kotlinx.coroutines)
+//  includeApi(Jetbrains.Kotlinx.coroutinesCore)
 //  includeApi(Jetbrains.Kotlinx.serialization)
 }
 

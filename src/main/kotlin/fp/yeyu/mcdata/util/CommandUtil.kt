@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
-import net.fabricmc.fabric.api.network.PacketContext
 import net.fabricmc.fabric.impl.networking.ClientSidePacketRegistryImpl
 import net.fabricmc.fabric.impl.networking.ServerSidePacketRegistryImpl
 import net.minecraft.network.PacketByteBuf
@@ -22,107 +21,54 @@ object CommandUtil {
     val logger: Logger = LogManager.getLogger()
 
     object Identifiers {
-        val logRequest = Identifier("playdata", "requestlog")
-        val logByteLocal = Identifier("playdata", "logbytelocal")
-        val logByteRequest = Identifier("playdata", "requestlogbyte")
-        val logLocal = Identifier("playdata", "loglocal")
-        val logSender = Identifier("playdata", "sendlog")
-        val logByteSender = Identifier("playdata", "sendbytelog")
+        val logByteLocal = Identifier("playdata", "logbyte")
+        val logLocal = Identifier("playdata", "logstring")
     }
 
     fun initMain() {
         CommandRegistrationCallback.EVENT.register(CommandUtil::registerCommands)
-        ServerSidePacketRegistryImpl.INSTANCE.register(Identifiers.logSender, LogUtil.Server::logPlayer)
-        ServerSidePacketRegistryImpl.INSTANCE.register(Identifiers.logByteSender, LogUtil.Server::logBytePlayer)
     }
 
     fun initClient() {
-        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logRequest, Client::onLogInfoRequest)
-        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logByteRequest, Client::onLogByteInfoRequest)
-        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logLocal, LogUtil.Client::onLogLocalRequest)
-        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logByteLocal, LogUtil.Client::onLogByteLocalRequest)
+        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logLocal, LogUtil::onLogLocalRequest)
+        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logByteLocal, LogUtil::onLogByteLocalRequest)
     }
 
     private fun registerCommands(commandDispatcher: CommandDispatcher<ServerCommandSource>, isDedicated: Boolean) {
-        commandDispatcher.register(CommandManager.literal("log").executes(Server::requestInfoCommand))
-        commandDispatcher.register(CommandManager.literal("logbyte").executes(Server::requestByteInfoCommand))
-        commandDispatcher.register(CommandManager.literal("loglocal").executes(Server::requestLogLocalCommand))
-        commandDispatcher.register(CommandManager.literal("logbytelocal").executes(Server::requestLogByteLocalCommand))
-        commandDispatcher.register(CommandManager.literal("exportmapping").executes { OrdinalMapperUtil.exportRawIds() })
+        commandDispatcher.register(CommandManager.literal("logstring").executes(CommandUtil::requestLogLocalCommand))
+        commandDispatcher.register(CommandManager.literal("logbyte").executes(CommandUtil::requestLogByteLocalCommand))
     }
 
-    object Client {
-        fun onLogInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) =
-                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logSender, PacketByteBuf(Unpooled.buffer()).apply(StringAttributeUtil::writeKeyPresses))
-
-        fun onLogByteInfoRequest(context: PacketContext, packetByteBuf: PacketByteBuf) =
-                ClientSidePacketRegistryImpl.INSTANCE.sendToServer(Identifiers.logByteSender, PacketByteBuf(Unpooled.buffer()).apply(ByteAttributeUtil::writeKeyPressesEnum))
+    private fun requestLogLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
+        val player = context.source.entity as ServerPlayerEntity?
+                ?: return requestLogLocalAllPlayers(context.source.world as ServerWorld)
+        requestLogLocal(player)
+        return 1
     }
 
-    object Server {
-        fun requestInfoCommand(context: CommandContext<out ServerCommandSource>): Int {
-            val player = context.source.entity as ServerPlayerEntity?
-                    ?: return requestInfoAllPlayers(context.source.world as ServerWorld)
-            requestInfo(player)
-            return 1
-        }
+    private fun requestLogByteLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
+        val player = context.source.entity as ServerPlayerEntity?
+                ?: return requestLogByteLocalAllPlayers(context.source.world as ServerWorld)
+        requestLogByteLocal(player)
+        return 1
+    }
 
-        fun requestByteInfoCommand(context: CommandContext<out ServerCommandSource>): Int {
-            val player = context.source.entity as ServerPlayerEntity?
-                    ?: return requestByteInfoAllPlayers(context.source.world as ServerWorld)
-            requestByteInfo(player)
-            return 1
-        }
+    private fun requestLogByteLocalAllPlayers(serverWorld: ServerWorld): Int {
+        serverWorld.players.forEach(this::requestLogByteLocal)
+        return serverWorld.players.size
+    }
 
-        private fun requestByteInfoAllPlayers(serverWorld: ServerWorld): Int {
-            serverWorld.players.forEach(this::requestByteInfo)
-            return serverWorld.players.size
-        }
-
-        private fun requestByteInfo(player: ServerPlayerEntity) {
-            ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logByteRequest, PacketByteBuf(Unpooled.buffer()))
-        }
-
-        fun requestLogLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
-            val player = context.source.entity as ServerPlayerEntity?
-                    ?: return requestLogLocalAllPlayers(context.source.world as ServerWorld)
-            requestLogLocal(player)
-            return 1
-        }
-
-        fun requestLogByteLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
-            val player = context.source.entity as ServerPlayerEntity?
-                    ?: return requestLogByteLocalAllPlayers(context.source.world as ServerWorld)
-            requestLogByteLocal(player)
-            return 1
-        }
-
-        private fun requestLogByteLocalAllPlayers(serverWorld: ServerWorld): Int {
-            serverWorld.players.forEach(this::requestLogByteLocal)
-            return serverWorld.players.size
-        }
-
-        private fun requestLogByteLocal(player: ServerPlayerEntity) {
-            ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logByteLocal, PacketByteBuf(Unpooled.buffer()))
-        }
+    private fun requestLogByteLocal(player: ServerPlayerEntity) {
+        ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logByteLocal, PacketByteBuf(Unpooled.buffer()))
+    }
 
 
-        private fun requestInfo(it: ServerPlayerEntity) {
-            ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(it, Identifiers.logRequest, PacketByteBuf(Unpooled.buffer()))
-        }
+    private fun requestLogLocal(player: ServerPlayerEntity) {
+        ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logLocal, PacketByteBuf(Unpooled.buffer()))
+    }
 
-        private fun requestInfoAllPlayers(serverWorld: ServerWorld): Int {
-            serverWorld.players.forEach(this::requestInfo)
-            return serverWorld.players.size
-        }
-
-        private fun requestLogLocal(player: ServerPlayerEntity) {
-            ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logLocal, PacketByteBuf(Unpooled.buffer()))
-        }
-
-        private fun requestLogLocalAllPlayers(serverWorld: ServerWorld): Int {
-            serverWorld.players.forEach(this::requestLogLocal)
-            return serverWorld.players.size
-        }
+    private fun requestLogLocalAllPlayers(serverWorld: ServerWorld): Int {
+        serverWorld.players.forEach(this::requestLogLocal)
+        return serverWorld.players.size
     }
 }

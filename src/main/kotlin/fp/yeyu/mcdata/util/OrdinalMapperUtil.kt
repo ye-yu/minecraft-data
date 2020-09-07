@@ -16,7 +16,7 @@ object OrdinalMapperUtil {
     }
 
     private fun createNew(child: String): File {
-        return File(FileUtil.logDirectory, child)
+        return File(FileUtil.logDirectoryInstance, child)
     }
 
     fun exportRawIds(): Int {
