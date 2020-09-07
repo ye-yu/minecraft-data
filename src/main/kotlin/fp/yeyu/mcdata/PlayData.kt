@@ -3,26 +3,15 @@ package fp.yeyu.mcdata
 import fp.yeyu.mcdata.util.CommandUtil
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
-/**
- * Tracked data:
- *  - block position
- *  - head rotation
- *  - cross-hair block
- *  - key press*
- *  - mouse press*
- *  - visible-mob
- *  - hot bar cursor
- *  - current gui inventories
- *  - visible blocks
- *
- * */
 object PlayData : ModInitializer, ClientModInitializer {
-    val configuration: ConfigFile by ConfigFile.Companion
+    private val logger: Logger = LogManager.getLogger()
 
     override fun onInitialize() {
         CommandUtil.initMain()
-        println(configuration.toString())
+        logger.debug(ConfigFile.configuration.toString())
     }
 
     override fun onInitializeClient() {

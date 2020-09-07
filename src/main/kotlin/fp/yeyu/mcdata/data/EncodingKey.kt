@@ -21,7 +21,7 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser? = object : By
     CURSOR(10, HotBarCursorByteParser),
     INVENTORY(11, InventoryByteParser),
     BLOCKS(12, BlocksByteParser),
-    MENU(13),
+    MENU(13, MenuByteParser),
     MOUSE(14),
     KEYBOARD(15),
     ITEM_SLOTS(16),

@@ -10,6 +10,7 @@
     "InventoryMixin",
     "ItemMixin",
     "PlayerEntityMixin",
+    "ScreenHandlerTypeMixin",
     "Vec3dMixin"
   ],
   "client": [

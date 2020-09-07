@@ -3,13 +3,16 @@ package fp.yeyu.mcdata.mixins;
 import fp.yeyu.mcdata.data.EncodingKey;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
+import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -25,6 +28,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 	@Shadow
 	@Final
 	public PlayerInventory inventory;
+
+	@Shadow
+	public ScreenHandler currentScreenHandler;
 
 	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
@@ -63,7 +69,27 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.CURSOR.serialize(buffer);
 		buffer.writeVarInt(inventory.selectedSlot);
 
-		/* todo: add opened menu, mouse, menu inventory, cursor slot */
+		/* todo: mouse, menu inventory, cursor slot */
+		ShortIdentifiable screenHandler = getSerializableScreenHandler();
+
+		if (screenHandler != null) {
+			serializeMenu(buffer, screenHandler);
+		}
+	}
+
+	private ShortIdentifiable getSerializableScreenHandler() {
+		if (world.isClient) {
+			if (MinecraftClient.getInstance().currentScreen instanceof HandledScreen)
+				return ((ShortIdentifiable) ((HandledScreen<?>) MinecraftClient.getInstance().currentScreen).getScreenHandler());
+		}
+
+		if (!world.isClient) return ((ShortIdentifiable) currentScreenHandler);
+		return null;
+	}
+
+	private void serializeMenu(PacketByteBuf buffer, ShortIdentifiable screenIdentifiable) {
+		EncodingKey.MENU.serialize(buffer);
+		buffer.writeVarInt(screenIdentifiable.getSelfRawId());
 	}
 
 	@NotNull

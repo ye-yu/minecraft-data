@@ -1,7 +1,7 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
-import fp.yeyu.mcdata.PlayData
+import fp.yeyu.mcdata.ConfigFile
 import net.minecraft.Bootstrap
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.registry.Registry
@@ -14,7 +14,7 @@ object FocusByteParser : ByteParser {
             jsonWriter.beginObject()
             jsonWriter.name("block_id")
             val blockId = buf.readVarInt()
-            if (PlayData.configuration.useRawId) {
+            if (ConfigFile.configuration.useRawId) {
                 jsonWriter.value(blockId)
             } else {
                 Bootstrap.initialize()
