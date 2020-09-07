@@ -30,6 +30,8 @@ object DecodingTest {
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
                 jsonWriter.setIndent("  ")
+                jsonWriter.beginObject()
+                jsonWriter.name("data")
                 jsonWriter.beginArray()
 
                 do {
@@ -40,6 +42,7 @@ object DecodingTest {
                 } while (true)
 
                 jsonWriter.endArray()
+                jsonWriter.endObject()
             }
         }
     }
@@ -53,6 +56,8 @@ object DecodingTest {
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
                 jsonWriter.setIndent("  ")
+                jsonWriter.beginObject()
+                jsonWriter.name("data")
                 jsonWriter.beginArray()
 
                 do {
@@ -63,6 +68,7 @@ object DecodingTest {
                 } while (true)
 
                 jsonWriter.endArray()
+                jsonWriter.endObject()
             }
         }
     }
