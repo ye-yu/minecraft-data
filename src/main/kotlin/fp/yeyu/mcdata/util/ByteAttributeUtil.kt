@@ -50,25 +50,6 @@ object ByteAttributeUtil {
         }
     }
 
-    fun writeKeyPressesEnum(buf: ByteQueue) {
-        GameKey.values().filter { it.key.isPressed }.also {
-            buf.push(it.isNotEmpty())
-            if (it.isNotEmpty()) {
-                buf.push(it.size)
-                it.forEach(buf::push)
-            }
-        }
-    }
-
-    fun parseKeyPresses(buf: ByteQueue): MutableList<GameKey> {
-        val arr = mutableListOf<GameKey>()
-        if (!buf.popBoolean()) return arr
-        for (i in 0 until buf.popInt()) {
-            arr += buf.popEnum(GameKey::class.java)
-        }
-        return arr
-    }
-
     fun writeVisibleMobs(buf: ByteQueue, player: PlayerEntity) {
         getVisibleMobs(player).run {
             if (isNotEmpty()) {

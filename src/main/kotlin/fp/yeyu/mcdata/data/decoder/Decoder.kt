@@ -14,7 +14,7 @@ object Decoder {
             val readByte: Byte = buf.popByte()
             if (readByte == EncodingKey.EOF.byte) break
 
-            EncodingKey[readByte].byteParser?.decode(buf, jsonWriter)
+            EncodingKey[readByte].byteParser.decode(buf, jsonWriter)
         } while (true)
 
         jsonWriter.endArray()

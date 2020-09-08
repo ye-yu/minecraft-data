@@ -15,7 +15,6 @@ import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-@Suppress("UNUSED_PARAMETER")
 object CommandUtil {
 
     val logger: Logger = LogManager.getLogger()
@@ -23,52 +22,50 @@ object CommandUtil {
     object Identifiers {
         val logByteLocal = Identifier("playdata", "logbyte")
         val logLocal = Identifier("playdata", "logstring")
+        val publish = Identifier("playdata", "publish")
+        val consume = Identifier("playdata", "consume")
+
+        val ids = arrayOf(
+                logByteLocal, logLocal, publish, consume
+        )
     }
 
     fun initMain() {
-        CommandRegistrationCallback.EVENT.register(CommandUtil::registerCommands)
+        CommandRegistrationCallback.EVENT.register{ dispatcher, _ ->
+            registerCommands(dispatcher)
+        }
     }
 
     fun initClient() {
-        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logLocal, LogUtil::onLogLocalRequest)
-        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logByteLocal, LogUtil::onLogByteLocalRequest)
+        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logLocal) { _, _ -> LogUtil.onLogLocalRequest() }
+        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.logByteLocal) { _, _ -> LogUtil.onLogByteLocalRequest() }
+        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.publish) { _, _ -> LogUtil.onPublishRequest() }
+        ClientSidePacketRegistryImpl.INSTANCE.register(Identifiers.consume) { _, _ -> LogUtil.onConsumeRequest() }
     }
 
-    private fun registerCommands(commandDispatcher: CommandDispatcher<ServerCommandSource>, isDedicated: Boolean) {
-        commandDispatcher.register(CommandManager.literal("logstring").executes(CommandUtil::requestLogLocalCommand))
-        commandDispatcher.register(CommandManager.literal("logbyte").executes(CommandUtil::requestLogByteLocalCommand))
+    private fun registerCommands(commandDispatcher: CommandDispatcher<ServerCommandSource>) {
+        Identifiers.ids.forEach { id ->
+            commandDispatcher
+                    .register(CommandManager.literal(id.path)
+                            .executes { context ->
+                                request(id, context)
+                            })
+
+        }
     }
 
-    private fun requestLogLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
+    private fun request(id: Identifier, context: CommandContext<out ServerCommandSource>): Int {
         val player = context.source.entity as ServerPlayerEntity?
-                ?: return requestLogLocalAllPlayers(context.source.world as ServerWorld)
-        requestLogLocal(player)
-        return 1
-    }
-
-    private fun requestLogByteLocalCommand(context: CommandContext<out ServerCommandSource>): Int {
-        val player = context.source.entity as ServerPlayerEntity?
-                ?: return requestLogByteLocalAllPlayers(context.source.world as ServerWorld)
-        requestLogByteLocal(player)
-        return 1
-    }
-
-    private fun requestLogByteLocalAllPlayers(serverWorld: ServerWorld): Int {
-        serverWorld.players.forEach(this::requestLogByteLocal)
-        return serverWorld.players.size
-    }
-
-    private fun requestLogByteLocal(player: ServerPlayerEntity) {
-        ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logByteLocal, PacketByteBuf(Unpooled.buffer()))
-    }
-
-
-    private fun requestLogLocal(player: ServerPlayerEntity) {
-        ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, Identifiers.logLocal, PacketByteBuf(Unpooled.buffer()))
-    }
-
-    private fun requestLogLocalAllPlayers(serverWorld: ServerWorld): Int {
-        serverWorld.players.forEach(this::requestLogLocal)
-        return serverWorld.players.size
+        return if (player != null) {
+            (player.world as ServerWorld).players.let {
+                it.forEach { player ->
+                    ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, id, PacketByteBuf(Unpooled.buffer()))
+                }
+                it.size
+            }
+        } else {
+            ServerSidePacketRegistryImpl.INSTANCE.sendToPlayer(player, id, PacketByteBuf(Unpooled.buffer()))
+            1
+        }
     }
 }

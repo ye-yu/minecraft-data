@@ -13,10 +13,14 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.*
 
+@Suppress("unused")
 class ConfigFile(
         val useRawId: Boolean = true,
-        val ringBufferSize: Int = 16
+        val ringBufferSize: Int = 16,
+        val useHeapBuffer: Boolean = false,
+        val bufferInitialCapacity: Int = 4096
 ) {
+
     fun writeToModFile() {
         JsonWriter(FileWriter(CONFIG_JSON)).use {
             it.setIndent("  ")
@@ -34,10 +38,6 @@ class ConfigFile(
             }
             it.endObject()
         }
-    }
-
-    override fun toString(): String {
-        return "Config[useRawId{$useRawId}]"
     }
 
     companion object {
@@ -62,11 +62,13 @@ class ConfigFile(
                                 Int::class.createType() -> {
                                     val toEntry: Any = value?.asInt ?: Int::class.cast(def)
                                     propMap[name] = toEntry
+                                    println("Deserialized $name to $toEntry")
                                 }
 
                                 Boolean::class.createType() -> {
                                     val toEntry: Any = value?.asBoolean ?: Boolean::class.cast(def)
                                     propMap[name] = toEntry
+                                    println("Deserialized $name to $toEntry")
                                 }
 
                                 else -> throw ClassCastException("Property $name expects ${it.returnType}.")

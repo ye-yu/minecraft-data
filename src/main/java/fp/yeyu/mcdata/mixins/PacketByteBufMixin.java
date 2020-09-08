@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @Mixin(PacketByteBuf.class)
@@ -60,6 +61,10 @@ public abstract class PacketByteBufMixin implements ByteQueue {
 	@Shadow public abstract ByteBuf writeBoolean(boolean bl);
 
 	@Shadow public abstract boolean readBoolean();
+
+	@Shadow public abstract byte[] array();
+
+	@Shadow public abstract ByteBuffer nioBuffer();
 
 	@Override
 	public void push(double d) {
@@ -139,5 +144,10 @@ public abstract class PacketByteBufMixin implements ByteQueue {
 	@Override
 	public UUID popUUID() {
 		return readUuid();
+	}
+
+	@Override
+	public @NotNull ByteBuffer toByteBuffer() {
+		return nioBuffer();
 	}
 }

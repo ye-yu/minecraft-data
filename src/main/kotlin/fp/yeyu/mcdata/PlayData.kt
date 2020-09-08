@@ -11,7 +11,7 @@ object PlayData : ModInitializer, ClientModInitializer {
 
     override fun onInitialize() {
         CommandUtil.initMain()
-        logger.debug(ConfigFile.configuration.toString())
+        logger.info(ConfigFile.configuration.toString())
     }
 
     override fun onInitializeClient() {

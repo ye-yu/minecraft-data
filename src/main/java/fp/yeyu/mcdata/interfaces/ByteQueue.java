@@ -2,6 +2,7 @@ package fp.yeyu.mcdata.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public interface ByteQueue {
@@ -38,5 +39,6 @@ public interface ByteQueue {
 
 	UUID popUUID();
 
-
+	@NotNull
+	ByteBuffer toByteBuffer();
 }

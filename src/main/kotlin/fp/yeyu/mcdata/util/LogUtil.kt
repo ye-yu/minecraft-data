@@ -1,20 +1,41 @@
 package fp.yeyu.mcdata.util
 
+import fp.yeyu.mcdata.LogRingBuffer
 import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.interfaces.ByteQueue
 import io.netty.buffer.Unpooled
-import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.PacketByteBuf
 import java.io.FileOutputStream
 import java.io.FileWriter
 
-@Suppress("UNUSED_PARAMETER")
 object LogUtil {
 
-    fun onLogLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = Thread(PlayDataGroup, this::logPlayer).start()
+    fun onLogLocalRequest() = Thread(PlayDataGroup, this::logPlayer).start()
+    fun onLogByteLocalRequest() = Thread(PlayDataGroup, this::logByte).start()
+    fun onPublishRequest() = Thread(PlayDataGroup, this::publish).start()
+    fun onConsumeRequest() = Thread(PlayDataGroup, this::consume).start()
 
-    fun onLogByteLocalRequest(context: PacketContext, packetByteBuf: PacketByteBuf) = Thread(PlayDataGroup, this::logByte).start()
+    private fun publish() {
+        val player = MinecraftClient.getInstance().player ?: return
+        val publisher = LogRingBuffer
+        EncodingKey.LOCAL.serialize(publisher)
+        ByteAttributeUtil.writeTimeStamp(publisher)
+        ByteAttributeUtil.writePlayerStats(publisher, player)
+        ByteAttributeUtil.writeKeyPresses(publisher)
+        ByteAttributeUtil.writeVisibleMobs(publisher, player)
+        ByteAttributeUtil.writeVisibleBlock(publisher, player)
+        EncodingKey.END.serialize(publisher)
+        publisher.publish()
+    }
+
+    private fun consume() {
+        val consumer = LogRingBuffer
+        FileOutputStream(FileUtil.logDestinationByte, true).use {
+            it.channel.use { ch -> ch.write(consumer.toByteBuffer()) }
+        }
+        consumer.consume()
+    }
 
     private fun logByte() {
         val player = MinecraftClient.getInstance().player ?: return
@@ -27,14 +48,8 @@ object LogUtil {
         ByteAttributeUtil.writeVisibleBlock(byteBuf, player)
         EncodingKey.END.serialize(byteBuf)
 
-        val array = (byteBuf as PacketByteBuf).array()
-        var pointer = array.size - 1
-        while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
-
         FileOutputStream(FileUtil.logDestinationByte, true).use {
-            for (i in 0..pointer) {
-                it.write(array[i].toInt())
-            }
+            it.channel.write(byteBuf.toByteBuffer())
         }
     }
 
