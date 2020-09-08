@@ -8,7 +8,6 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
@@ -34,12 +33,6 @@ object StringAttributeUtil {
 
     fun getKeyPresses(): String = "keys:" + if (!isClient) "none" else {
         GameKey.values().filter { it.key.isPressed }.joinToString(",")
-    }
-
-    fun getKeyPresses(buf: PacketByteBuf): String = buf.readString()
-
-    fun writeKeyPresses(buf: PacketByteBuf) {
-        buf.writeString(getKeyPresses())
     }
 
     fun getHotBarCursor(player: PlayerEntity): String = "cursor: ${player.inventory.selectedSlot}"

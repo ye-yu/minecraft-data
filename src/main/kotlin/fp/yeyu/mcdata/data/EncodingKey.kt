@@ -2,8 +2,8 @@ package fp.yeyu.mcdata.data
 
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.decoder.*
-import fp.yeyu.mcdata.interfaces.ByteSerializable
 import fp.yeyu.mcdata.interfaces.ByteQueue
+import fp.yeyu.mcdata.interfaces.ByteSerializable
 
 enum class EncodingKey(val byte: Byte, val byteParser: ByteParser = object : ByteParser {
     override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {

@@ -1,11 +1,10 @@
 package fp.yeyu.mcdata.util
 
 import fp.yeyu.mcdata.LogRingBuffer
+import fp.yeyu.mcdata.VariableByteBuf
 import fp.yeyu.mcdata.data.EncodingKey
-import fp.yeyu.mcdata.interfaces.ByteQueue
 import io.netty.buffer.Unpooled
 import net.minecraft.client.MinecraftClient
-import net.minecraft.network.PacketByteBuf
 import java.io.FileOutputStream
 import java.io.FileWriter
 
@@ -39,7 +38,7 @@ object LogUtil {
 
     private fun logByte() {
         val player = MinecraftClient.getInstance().player ?: return
-        val byteBuf = PacketByteBuf(Unpooled.buffer()) as ByteQueue
+        val byteBuf = VariableByteBuf(Unpooled.buffer())
         EncodingKey.LOCAL.serialize(byteBuf)
         ByteAttributeUtil.writeTimeStamp(byteBuf)
         ByteAttributeUtil.writePlayerStats(byteBuf, player)

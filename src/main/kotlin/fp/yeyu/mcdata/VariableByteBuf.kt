@@ -70,12 +70,16 @@ class VariableByteBuf(val parent: ByteBuf) : ByteQueue {
         return nettyBuffer.readEnumConstant(e)
     }
 
-    override fun popUUID(): UUID? {
+    override fun popUUID(): UUID {
         return nettyBuffer.readUuid()
     }
 
     override fun toByteBuffer(): ByteBuffer {
         return nettyBuffer.nioBuffer()
+    }
+
+    override fun clear() {
+        nettyBuffer.clear()
     }
 
     fun load(arr: ByteArray): VariableByteBuf {

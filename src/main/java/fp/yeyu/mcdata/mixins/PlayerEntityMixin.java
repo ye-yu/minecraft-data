@@ -1,8 +1,8 @@
 package fp.yeyu.mcdata.mixins;
 
 import fp.yeyu.mcdata.data.EncodingKey;
-import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.ByteQueue;
+import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
 import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import net.minecraft.client.MinecraftClient;

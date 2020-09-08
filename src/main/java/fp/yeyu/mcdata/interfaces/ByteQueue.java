@@ -37,8 +37,11 @@ public interface ByteQueue {
 
 	<T extends Enum<T>> T popEnum(@NotNull Class<T> e);
 
+	@NotNull
 	UUID popUUID();
 
 	@NotNull
 	ByteBuffer toByteBuffer();
+
+	void clear();
 }

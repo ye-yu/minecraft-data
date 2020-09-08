@@ -1,7 +1,7 @@
 package fp.yeyu.mcdata.data
 
-import fp.yeyu.mcdata.interfaces.ByteSerializable
 import fp.yeyu.mcdata.interfaces.ByteQueue
+import fp.yeyu.mcdata.interfaces.ByteSerializable
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.KeyBinding
 

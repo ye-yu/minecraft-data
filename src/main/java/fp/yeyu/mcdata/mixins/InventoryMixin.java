@@ -1,7 +1,7 @@
 package fp.yeyu.mcdata.mixins;
 
-import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.ByteQueue;
+import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import kotlin.Pair;
 import net.minecraft.entity.player.PlayerInventory;

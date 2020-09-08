@@ -4,7 +4,6 @@ import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.ConfigFile
 import fp.yeyu.mcdata.interfaces.ByteQueue
 import net.minecraft.Bootstrap
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.registry.Registry
 
 object MobsByteParser : ByteParser {

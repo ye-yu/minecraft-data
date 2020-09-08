@@ -3,7 +3,6 @@ package fp.yeyu.mcdata
 import fp.yeyu.mcdata.interfaces.ByteQueue
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.UnpooledByteBufAllocator
-import net.minecraft.network.PacketByteBuf
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.nio.ByteBuffer
@@ -28,14 +27,14 @@ object LogRingBuffer : ByteQueue {
     private val ringBufferSize: Int by ConfigFile
     private val useHeapBuffer: Boolean by ConfigFile
     private val bufferInitialCapacity: Int by ConfigFile
-    private val ring: Array<PacketByteBuf>
+    private val ring: Array<VariableByteBuf>
     private val logger: Logger = LogManager.getLogger()
 
     class RingBufferSizeException(size: Int) : NegativeArraySizeException("Ring buffer cannot be less than 2! Got $size instead")
 
     init {
         if (ringBufferSize < 2) throw RingBufferSizeException(ringBufferSize)
-        ring = Array(ringBufferSize) { PacketByteBuf(getBuffer()) }
+        ring = Array(ringBufferSize) { VariableByteBuf(getBuffer()) }
     }
 
     private fun getBuffer(): ByteBuf {
@@ -47,46 +46,46 @@ object LogRingBuffer : ByteQueue {
     }
 
     override fun push(d: Double) {
-        ring[writerPointer].writeDouble(d)
+        ring[writerPointer].push(d)
     }
 
     override fun push(l: Long) {
-        ring[writerPointer].writeVarLong(l)
+        ring[writerPointer].push(l)
     }
 
     override fun push(i: Int) {
-        ring[writerPointer].writeVarInt(i)
+        ring[writerPointer].push(i)
     }
 
     override fun push(s: Short) {
-        ring[writerPointer].writeShort(s.toInt())
+        ring[writerPointer].push(s.toInt())
     }
 
     override fun push(byte: Byte) {
-        ring[writerPointer].writeByte(byte.toInt())
+        ring[writerPointer].push(byte.toInt())
     }
 
     override fun push(enum: Enum<*>) {
-        ring[writerPointer].writeEnumConstant(enum)
+        ring[writerPointer].push(enum)
     }
 
     override fun push(uuid: UUID) {
-        ring[writerPointer].writeUuid(uuid)
+        ring[writerPointer].push(uuid)
     }
 
     override fun push(b: Boolean) {
-        ring[writerPointer].writeBoolean(b)
+        ring[writerPointer].push(b)
     }
 
-    override fun toByteBuffer(): ByteBuffer = ring[readerPointer].nioBuffer()
-    override fun popDouble(): Double = ring[readerPointer].readDouble()
-    override fun popLong(): Long = ring[readerPointer].readVarLong()
-    override fun popInt(): Int = ring[readerPointer].readVarInt()
-    override fun popShort(): Short = ring[readerPointer].readShort()
-    override fun popByte(): Byte = ring[readerPointer].readByte()
-    override fun popBoolean(): Boolean = ring[readerPointer].readBoolean()
-    override fun <T : Enum<T>?> popEnum(e: Class<T>): T = ring[readerPointer].readEnumConstant(e)
-    override fun popUUID(): UUID = ring[readerPointer].readUuid()
+    override fun toByteBuffer(): ByteBuffer = ring[readerPointer].toByteBuffer()
+    override fun popDouble(): Double = ring[readerPointer].popDouble()
+    override fun popLong(): Long = ring[readerPointer].popLong()
+    override fun popInt(): Int = ring[readerPointer].popInt()
+    override fun popShort(): Short = ring[readerPointer].popShort()
+    override fun popByte(): Byte = ring[readerPointer].popByte()
+    override fun popBoolean(): Boolean = ring[readerPointer].popBoolean()
+    override fun <T : Enum<T>?> popEnum(e: Class<T>): T = ring[readerPointer].popEnum(e)
+    override fun popUUID(): UUID = ring[readerPointer].popUUID()
 
 
     fun hasNext(): Boolean = readerPointer != writerPointer
@@ -111,5 +110,11 @@ object LogRingBuffer : ByteQueue {
 
     private fun flushReader() {
         ring[readerPointer].clear()
+    }
+
+    override fun clear() {
+        writerPointer = 0
+        readerPointer = 0
+        ring.forEach(VariableByteBuf::clear)
     }
 }

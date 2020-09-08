@@ -1,7 +1,7 @@
 package fp.yeyu.mcdata.mixins;
 
-import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.ByteQueue;
+import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;

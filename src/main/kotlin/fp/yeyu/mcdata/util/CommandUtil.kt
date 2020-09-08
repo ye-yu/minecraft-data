@@ -31,7 +31,7 @@ object CommandUtil {
     }
 
     fun initMain() {
-        CommandRegistrationCallback.EVENT.register{ dispatcher, _ ->
+        CommandRegistrationCallback.EVENT.register { dispatcher, _ ->
             registerCommands(dispatcher)
         }
     }
