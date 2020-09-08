@@ -2,12 +2,13 @@ package fp.yeyu.mcdata.data
 
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.decoder.*
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteSerializable
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 enum class EncodingKey(val byte: Byte, val byteParser: ByteParser? = object : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
     }
-}) {
+}) : ByteSerializable {
     BUFFER(0),
     LOCAL(1, LocalByteParser),
     SERVER(2, ServerByteParser),
@@ -33,7 +34,8 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser? = object : By
         operator fun get(byte: Byte): EncodingKey = values().first { it.byte == byte }
     }
 
-    fun serialize(buf: PacketByteBuf) {
-        buf.writeByte(this.byte.toInt())
+    override fun serialize(queue: ByteQueue) {
+        queue.push(this.byte)
     }
+
 }

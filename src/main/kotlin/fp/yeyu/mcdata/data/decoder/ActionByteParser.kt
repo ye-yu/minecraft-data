@@ -2,17 +2,17 @@ package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.GameKey
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 object ActionByteParser : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.name("action")
 
-        val size = buf.readVarInt()
+        val size = queue.popInt()
         run {
             jsonWriter.beginArray()
             repeat(size) {
-                jsonWriter.value(buf.readEnumConstant(GameKey::class.java).name)
+                jsonWriter.value(queue.popEnum(GameKey::class.java).name)
             }
             jsonWriter.endArray()
         }

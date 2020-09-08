@@ -1,6 +1,7 @@
 package fp.yeyu.mcdata.util
 
 import fp.yeyu.mcdata.data.EncodingKey
+import fp.yeyu.mcdata.interfaces.ByteQueue
 import io.netty.buffer.Unpooled
 import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.client.MinecraftClient
@@ -17,7 +18,7 @@ object LogUtil {
 
     private fun logByte() {
         val player = MinecraftClient.getInstance().player ?: return
-        val byteBuf = PacketByteBuf(Unpooled.buffer())
+        val byteBuf = PacketByteBuf(Unpooled.buffer()) as ByteQueue
         EncodingKey.LOCAL.serialize(byteBuf)
         ByteAttributeUtil.writeTimeStamp(byteBuf)
         ByteAttributeUtil.writePlayerStats(byteBuf, player)
@@ -26,7 +27,7 @@ object LogUtil {
         ByteAttributeUtil.writeVisibleBlock(byteBuf, player)
         EncodingKey.END.serialize(byteBuf)
 
-        val array = byteBuf.array()
+        val array = (byteBuf as PacketByteBuf).array()
         var pointer = array.size - 1
         while (array[pointer] == EncodingKey.BUFFER.byte) pointer--
 

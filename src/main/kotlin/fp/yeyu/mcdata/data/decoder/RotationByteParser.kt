@@ -1,16 +1,16 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 object RotationByteParser : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.name("rotation")
         jsonWriter.beginObject()
         jsonWriter.name("pitch")
-        jsonWriter.value(buf.readDouble())
+        jsonWriter.value(queue.popDouble())
         jsonWriter.name("yaw")
-        jsonWriter.value(buf.readDouble())
+        jsonWriter.value(queue.popDouble())
         jsonWriter.endObject()
     }
 

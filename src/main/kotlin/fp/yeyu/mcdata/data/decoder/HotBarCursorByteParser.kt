@@ -1,12 +1,12 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 object HotBarCursorByteParser : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.name("hot_bar")
-        jsonWriter.value(buf.readVarInt())
+        jsonWriter.value(queue.popInt())
     }
 
 }

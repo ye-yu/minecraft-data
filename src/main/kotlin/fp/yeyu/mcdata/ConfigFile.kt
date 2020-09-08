@@ -88,18 +88,14 @@ class ConfigFile(
             }
         }
 
-        private fun getOrNullPrimitive(@Suppress("SameParameterValue") field: String, jsonObject: JsonObject): JsonPrimitive? {
+        private fun getOrNullPrimitive(field: String, jsonObject: JsonObject): JsonPrimitive? {
             val get = jsonObject.get(field)
-            return if (get == null || get.isJsonNull) null else if (get.isJsonPrimitive) get.asJsonPrimitive else null
+            return if (get == null || get.isJsonNull || !get.isJsonPrimitive) null else get.asJsonPrimitive
         }
 
-        operator fun getValue(playData: PlayData, property: KProperty<*>): ConfigFile {
-            return deserialize()
-        }
-
-        operator fun getValue(logRingBuffer: LogRingBuffer, property: KProperty<*>): Int {
-            if (property.name != "size") throw IllegalPropertyDelegateAccessException(IllegalAccessException("Configuration does not provide for ${property.name}"))
-            return configuration.ringBufferSize
+        @Suppress("UNCHECKED_CAST")
+        operator fun <T> getValue(any: Any, property: KProperty<*>): T {
+            return ConfigFile::class.memberProperties.first { it.name == property.name }.get(configuration) as T
         }
     }
 }

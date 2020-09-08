@@ -9,6 +9,7 @@
     "EntityTypeMixin",
     "InventoryMixin",
     "ItemMixin",
+    "PacketByteBufMixin",
     "PlayerEntityMixin",
     "ScreenHandlerTypeMixin",
     "Vec3dMixin"

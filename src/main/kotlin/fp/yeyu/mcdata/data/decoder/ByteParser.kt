@@ -1,8 +1,8 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 interface ByteParser {
-    fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter)
+    fun decode(queue: ByteQueue, jsonWriter: JsonWriter)
 }

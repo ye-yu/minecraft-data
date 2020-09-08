@@ -1,18 +1,18 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 object PositionByteParser : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.name("position")
         jsonWriter.beginObject()
         jsonWriter.name("x")
-        jsonWriter.value(buf.readDouble())
+        jsonWriter.value(queue.popDouble())
         jsonWriter.name("y")
-        jsonWriter.value(buf.readDouble())
+        jsonWriter.value(queue.popDouble())
         jsonWriter.name("z")
-        jsonWriter.value(buf.readDouble())
+        jsonWriter.value(queue.popDouble())
         jsonWriter.endObject()
     }
 

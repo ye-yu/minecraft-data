@@ -1,10 +1,9 @@
 package fp.yeyu.mcdata.data
 
-import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.interfaces.ByteSerializable
+import fp.yeyu.mcdata.interfaces.ByteQueue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.KeyBinding
-import net.minecraft.network.PacketByteBuf
 
 enum class GameKey(keySupplier: () -> KeyBinding) : ByteSerializable {
     KEY_ATTACK({ MinecraftClient.getInstance().options.keyAttack }),
@@ -43,8 +42,8 @@ enum class GameKey(keySupplier: () -> KeyBinding) : ByteSerializable {
 
     val key: KeyBinding by lazy { keySupplier() }
 
-    override fun serialize(buffer: PacketByteBuf) {
-        buffer.writeEnumConstant(this)
+    override fun serialize(queue: ByteQueue) {
+        queue.push(this)
     }
 
     companion object {

@@ -3,6 +3,7 @@ package fp.yeyu.mcdata.test
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.data.decoder.Decoder
+import fp.yeyu.mcdata.interfaces.ByteQueue
 import io.netty.buffer.Unpooled
 import net.minecraft.network.PacketByteBuf
 import java.io.File
@@ -26,7 +27,7 @@ object DecodingTest {
         val destination = File(directoryName, "simple-local-dat.json")
         getResourceStream("/test/simple-local.dat").use {
             val bytes = it.readBytes()
-            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes)
+            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes) as ByteQueue
             EncodingKey.EOF.serialize(buf)
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
@@ -40,7 +41,7 @@ object DecodingTest {
         val destination = File(directoryName, "two-local-dat.json")
         getResourceStream("/test/two-local.dat").use {
             val bytes = it.readBytes()
-            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes)
+            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes) as ByteQueue
             EncodingKey.EOF.serialize(buf)
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->
@@ -54,7 +55,7 @@ object DecodingTest {
         val destination = File(directoryName, "session1-dat.json")
         getResourceStream("/test/session1.dat").use {
             val bytes = it.readBytes()
-            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes)
+            val buf = PacketByteBuf(Unpooled.buffer()).load(bytes) as ByteQueue
             EncodingKey.EOF.serialize(buf)
 
             JsonWriter(FileWriter(destination)).use { jsonWriter ->

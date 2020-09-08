@@ -1,11 +1,11 @@
 package fp.yeyu.mcdata.mixins;
 
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
+import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,9 +17,9 @@ public abstract class EntityMixin extends Entity implements ByteSerializable {
 	}
 
 	@Override
-	public void serialize(@NotNull PacketByteBuf buffer) {
+	public void serialize(@NotNull ByteQueue writer) {
 		final int byteId = ((ShortIdentifiable) getType()).getSelfRawId();
-		buffer.writeVarInt(byteId);
-		((ByteSerializable) getPos()).serialize(buffer);
+		writer.push(byteId);
+		((ByteSerializable) getPos()).serialize(writer);
 	}
 }

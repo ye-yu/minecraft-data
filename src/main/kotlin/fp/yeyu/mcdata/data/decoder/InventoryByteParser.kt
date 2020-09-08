@@ -2,25 +2,25 @@ package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.ConfigFile
+import fp.yeyu.mcdata.interfaces.ByteQueue
 import net.minecraft.Bootstrap
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.registry.Registry
 
 object InventoryByteParser : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.name("inventory")
 
-        val size = buf.readVarInt()
+        val size = queue.popInt()
         jsonWriter.beginArray()
         repeat(size) {
             jsonWriter.beginObject()
             jsonWriter.name("slot")
-            jsonWriter.value(buf.readVarInt())
+            jsonWriter.value(queue.popInt())
             jsonWriter.name("count")
-            jsonWriter.value(buf.readVarInt())
+            jsonWriter.value(queue.popInt())
             jsonWriter.name("item_id")
 
-            val itemId = buf.readVarInt()
+            val itemId = queue.popInt()
 
             if (ConfigFile.configuration.useRawId) {
                 jsonWriter.value(itemId)

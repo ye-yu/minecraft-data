@@ -1,12 +1,11 @@
 package fp.yeyu.mcdata.interfaces;
 
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public interface ByteSerializable {
-	void serialize(@NotNull PacketByteBuf buffer);
+	void serialize(@NotNull ByteQueue writer);
 
-	default void serialize(@NotNull PacketByteBuf buffer, SerializationContext context) {
-		serialize(buffer);
+	default void serialize(@NotNull ByteQueue writer, SerializationContext context) {
+		serialize(writer);
 	}
 }

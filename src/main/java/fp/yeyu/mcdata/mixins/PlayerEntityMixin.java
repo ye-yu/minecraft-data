@@ -2,6 +2,7 @@ package fp.yeyu.mcdata.mixins;
 
 import fp.yeyu.mcdata.data.EncodingKey;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
+import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
 import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
 import net.minecraft.client.MinecraftClient;
@@ -11,7 +12,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
@@ -37,12 +37,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 	}
 
 	@Override
-	public void serialize(@NotNull PacketByteBuf buffer) {
-		EncodingKey.UUID.serialize(buffer);
-		buffer.writeUuid(uuid);
+	public void serialize(@NotNull ByteQueue writer) {
+		EncodingKey.UUID.serialize(writer);
+		writer.push(uuid);
 
-		EncodingKey.POSITION.serialize(buffer);
-		((ByteSerializable) getPos()).serialize(buffer);
+		EncodingKey.POSITION.serialize(writer);
+		((ByteSerializable) getPos()).serialize(writer);
 
 
 		Entity camera;
@@ -52,28 +52,28 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 			camera = ((ServerPlayerEntity) (Object) this).getCameraEntity();
 		}
 
-		EncodingKey.ROTATION.serialize(buffer);
-		buffer.writeDouble(camera.pitch);
-		buffer.writeDouble(camera instanceof LivingEntity ? ((LivingEntity) camera).headYaw : camera.yaw);
+		EncodingKey.ROTATION.serialize(writer);
+		writer.push(camera.pitch);
+		writer.push(camera instanceof LivingEntity ? ((LivingEntity) camera).headYaw : camera.yaw);
 
 		final HitResult hitResult = camera.rayTrace(20.0, 0f, false);
 		if (hitResult.getType() == HitResult.Type.BLOCK) {
 			final ByteSerializable blockPos = (ByteSerializable) ((BlockHitResult) hitResult).getBlockPos();
-			EncodingKey.FOCUS.serialize(buffer);
-			blockPos.serialize(buffer, this);
+			EncodingKey.FOCUS.serialize(writer);
+			blockPos.serialize(writer, this);
 		}
 
-		EncodingKey.INVENTORY.serialize(buffer);
-		((ByteSerializable) inventory).serialize(buffer);
+		EncodingKey.INVENTORY.serialize(writer);
+		((ByteSerializable) inventory).serialize(writer);
 
-		EncodingKey.CURSOR.serialize(buffer);
-		buffer.writeVarInt(inventory.selectedSlot);
+		EncodingKey.CURSOR.serialize(writer);
+		writer.push(inventory.selectedSlot);
 
 		/* todo: mouse, menu inventory, cursor slot */
 		ShortIdentifiable screenHandler = getSerializableScreenHandler();
 
 		if (screenHandler != null) {
-			serializeMenu(buffer, screenHandler);
+			serializeMenu(writer, screenHandler);
 		}
 	}
 
@@ -87,9 +87,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		return null;
 	}
 
-	private void serializeMenu(PacketByteBuf buffer, ShortIdentifiable screenIdentifiable) {
+	private void serializeMenu(ByteQueue buffer, ShortIdentifiable screenIdentifiable) {
 		EncodingKey.MENU.serialize(buffer);
-		buffer.writeVarInt(screenIdentifiable.getSelfRawId());
+		buffer.push(screenIdentifiable.getSelfRawId());
 	}
 
 	@NotNull

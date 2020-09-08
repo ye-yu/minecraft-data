@@ -1,12 +1,12 @@
 package fp.yeyu.mcdata.data.decoder
 
 import com.google.gson.stream.JsonWriter
-import net.minecraft.network.PacketByteBuf
+import fp.yeyu.mcdata.interfaces.ByteQueue
 
 object UUIDByteParser : ByteParser {
-    override fun decode(buf: PacketByteBuf, jsonWriter: JsonWriter) {
+    override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.name("uuid")
-        jsonWriter.value(buf.readUuid().toString())
+        jsonWriter.value(queue.popUUID().toString())
     }
 
 }

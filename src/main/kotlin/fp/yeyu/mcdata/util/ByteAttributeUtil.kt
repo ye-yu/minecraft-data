@@ -2,6 +2,7 @@ package fp.yeyu.mcdata.util
 
 import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.data.GameKey
+import fp.yeyu.mcdata.interfaces.ByteQueue
 import fp.yeyu.mcdata.interfaces.ByteSerializable
 import fp.yeyu.mcdata.interfaces.SerializationContext
 import net.fabricmc.api.EnvType
@@ -10,7 +11,6 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
@@ -22,16 +22,16 @@ object ByteAttributeUtil {
             if (isClient) MinecraftClient.getInstance().cameraEntity ?: player
             else (player as ServerPlayerEntity).cameraEntity
 
-    fun writeTimeStamp(buf: PacketByteBuf) {
+    fun writeTimeStamp(buf: ByteQueue) {
         EncodingKey.TIME.serialize(buf)
-        buf.writeLong(System.currentTimeMillis())
+        buf.push(System.currentTimeMillis())
     }
 
-    fun writeKeyPresses(buf: PacketByteBuf) {
+    fun writeKeyPresses(buf: ByteQueue) {
         GameKey.values().filter { it.key.isPressed }.also {
             if (it.isNotEmpty()) {
                 GameKey.encodingKey.serialize(buf)
-                buf.writeVarInt(it.size)
+                buf.push(it.size)
                 it.forEach { key -> key.serialize(buf) }
             }
         }
@@ -50,44 +50,44 @@ object ByteAttributeUtil {
         }
     }
 
-    fun writeKeyPressesEnum(buf: PacketByteBuf) {
+    fun writeKeyPressesEnum(buf: ByteQueue) {
         GameKey.values().filter { it.key.isPressed }.also {
-            buf.writeBoolean(it.isNotEmpty())
+            buf.push(it.isNotEmpty())
             if (it.isNotEmpty()) {
-                buf.writeVarInt(it.size)
-                it.forEach(buf::writeEnumConstant)
+                buf.push(it.size)
+                it.forEach(buf::push)
             }
         }
     }
 
-    fun parseKeyPresses(buf: PacketByteBuf): MutableList<GameKey> {
+    fun parseKeyPresses(buf: ByteQueue): MutableList<GameKey> {
         val arr = mutableListOf<GameKey>()
-        if (!buf.readBoolean()) return arr
-        for (i in 0 until buf.readVarInt()) {
-            arr += buf.readEnumConstant(GameKey::class.java)
+        if (!buf.popBoolean()) return arr
+        for (i in 0 until buf.popInt()) {
+            arr += buf.popEnum(GameKey::class.java)
         }
         return arr
     }
 
-    fun writeVisibleMobs(buf: PacketByteBuf, player: PlayerEntity) {
+    fun writeVisibleMobs(buf: ByteQueue, player: PlayerEntity) {
         getVisibleMobs(player).run {
             if (isNotEmpty()) {
                 EncodingKey.MOBS.serialize(buf)
-                buf.writeVarInt(size)
+                buf.push(size)
                 forEach { (it as ByteSerializable).serialize(buf) }
             }
         }
     }
 
-    fun writePlayerStats(buf: PacketByteBuf, player: PlayerEntity) {
+    fun writePlayerStats(buf: ByteQueue, player: PlayerEntity) {
         (player as ByteSerializable).serialize(buf)
     }
 
-    fun writeVisibleBlock(buf: PacketByteBuf, player: PlayerEntity) {
+    fun writeVisibleBlock(buf: ByteQueue, player: PlayerEntity) {
         getVisibleBlocks(player).run {
             if (isNotEmpty()) {
                 EncodingKey.BLOCKS.serialize(buf)
-                buf.writeVarInt(size)
+                buf.push(size)
                 forEach { (it as ByteSerializable).serialize(buf, player as SerializationContext) }
             }
         }
