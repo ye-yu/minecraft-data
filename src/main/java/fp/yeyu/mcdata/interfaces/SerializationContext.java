@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface SerializationContext {
 	@Nullable
-	default World getWorld() {
+	default World getWorldContext() {
 		return null;
 	}
 }

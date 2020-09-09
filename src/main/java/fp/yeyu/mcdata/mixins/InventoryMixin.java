@@ -2,7 +2,7 @@ package fp.yeyu.mcdata.mixins;
 
 import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
-import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
+import fp.yeyu.mcdata.interfaces.IntIdentifiable;
 import kotlin.Pair;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,7 @@ public class InventoryMixin implements ByteSerializable {
 		for (Pair<Integer, ItemStack> pair : itemStacks) {
 			writer.push(pair.getFirst());
 			writer.push(pair.getSecond().getCount());
-			writer.push(((ShortIdentifiable) pair.getSecond().getItem()).getSelfRawId());
+			writer.push(((IntIdentifiable) pair.getSecond().getItem()).getSelfRawId());
 		}
 
 	}

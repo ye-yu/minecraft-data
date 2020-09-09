@@ -10,8 +10,8 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser = object : Byt
     }
 }) : ByteSerializable {
     BUFFER(0),
-    LOCAL(1, LocalByteParser),
-    SERVER(2, ServerByteParser),
+    START(1, StartByteParser),
+    WORLD(2, WorldByteParser),
     TIME(3, TimestampByteParser),
     UUID(4, UUIDByteParser),
     POSITION(5, PositionByteParser),
@@ -27,6 +27,7 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser = object : Byt
     KEYBOARD(15),
     ITEM_SLOTS(16),
     CURSOR_SLOTS(17),
+    BIOME(18, BiomeByteParser),
     END(Byte.MAX_VALUE, EndByteParser),
     EOF(-1);
 

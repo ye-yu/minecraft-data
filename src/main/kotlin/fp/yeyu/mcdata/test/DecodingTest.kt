@@ -42,5 +42,6 @@ fun main() {
     DecodingTest.prepare()
     DecodingTest.readData("late-reader")
     DecodingTest.readData("simple1")
+    DecodingTest.readData("simple2")
     DecodingTest.readData("session1")
 }

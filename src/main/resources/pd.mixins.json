@@ -3,6 +3,7 @@
   "package": "fp.yeyu.mcdata.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BiomeMixin",
     "BlockMixin",
     "BlockPosMixin",
     "EntityMixin",
@@ -12,7 +13,8 @@
     "MinecraftClientMixin",
     "PlayerEntityMixin",
     "ScreenHandlerTypeMixin",
-    "Vec3dMixin"
+    "Vec3dMixin",
+    "WorldMixin"
   ],
   "client": [
   ],

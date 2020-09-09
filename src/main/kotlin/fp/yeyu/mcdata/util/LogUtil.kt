@@ -18,7 +18,7 @@ object LogUtil {
     private fun publish() {
         val player = MinecraftClient.getInstance().player ?: return
         val publisher = LogRingBuffer
-        EncodingKey.LOCAL.serialize(publisher)
+        EncodingKey.START.serialize(publisher)
         ByteAttributeUtil.writeTimeStamp(publisher)
         ByteAttributeUtil.writePlayerStats(publisher, player)
         ByteAttributeUtil.writeKeyPresses(publisher)
@@ -39,7 +39,7 @@ object LogUtil {
     private fun logByte() {
         val player = MinecraftClient.getInstance().player ?: return
         val byteBuf = VariableByteBuf(Unpooled.buffer())
-        EncodingKey.LOCAL.serialize(byteBuf)
+        EncodingKey.START.serialize(byteBuf)
         ByteAttributeUtil.writeTimeStamp(byteBuf)
         ByteAttributeUtil.writePlayerStats(byteBuf, player)
         ByteAttributeUtil.writeKeyPresses(byteBuf)

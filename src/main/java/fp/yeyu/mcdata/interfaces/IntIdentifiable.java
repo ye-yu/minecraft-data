@@ -1,5 +1,5 @@
 package fp.yeyu.mcdata.interfaces;
 
-public interface ShortIdentifiable {
+public interface IntIdentifiable {
 	int getSelfRawId();
 }

@@ -4,9 +4,10 @@ import fp.yeyu.mcdata.data.EncodingKey;
 import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
-import fp.yeyu.mcdata.interfaces.ShortIdentifiable;
+import fp.yeyu.mcdata.interfaces.IntIdentifiable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -38,6 +39,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 
 	@Override
 	public void serialize(@NotNull ByteQueue writer) {
+		EncodingKey.WORLD.serialize(writer);
+		((ByteSerializable) world).serialize(writer);
+
+		EncodingKey.BIOME.serialize(writer);
+		((ByteSerializable) (Object) world.getBiome(getBlockPos())).serialize(writer, this);
+
 		EncodingKey.UUID.serialize(writer);
 		writer.push(uuid);
 
@@ -70,24 +77,24 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		writer.push(inventory.selectedSlot);
 
 		/* todo: mouse, menu inventory, cursor slot */
-		ShortIdentifiable screenHandler = getSerializableScreenHandler();
+		IntIdentifiable screenHandler = getSerializableScreenHandler();
 
 		if (screenHandler != null) {
 			serializeMenu(writer, screenHandler);
 		}
 	}
 
-	private ShortIdentifiable getSerializableScreenHandler() {
+	private IntIdentifiable getSerializableScreenHandler() {
 		if (world.isClient) {
 			if (MinecraftClient.getInstance().currentScreen instanceof HandledScreen)
-				return ((ShortIdentifiable) ((HandledScreen<?>) MinecraftClient.getInstance().currentScreen).getScreenHandler());
+				return ((IntIdentifiable) ((HandledScreen<?>) MinecraftClient.getInstance().currentScreen).getScreenHandler());
 		}
 
-		if (!world.isClient) return ((ShortIdentifiable) currentScreenHandler);
+		if (!world.isClient) return ((IntIdentifiable) currentScreenHandler);
 		return null;
 	}
 
-	private void serializeMenu(ByteQueue buffer, ShortIdentifiable screenIdentifiable) {
+	private void serializeMenu(ByteQueue buffer, IntIdentifiable screenIdentifiable) {
 		EncodingKey.MENU.serialize(buffer);
 		buffer.push(screenIdentifiable.getSelfRawId());
 	}
@@ -99,7 +106,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 	}
 
 	@Override
-	public @Nullable World getWorld() {
+	public @Nullable World getWorldContext() {
 		return world;
 	}
+
 }
