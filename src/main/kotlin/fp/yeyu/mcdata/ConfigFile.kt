@@ -6,6 +6,8 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.util.FileUtil
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -18,7 +20,8 @@ class ConfigFile(
         val useRawId: Boolean = true,
         val ringBufferSize: Int = 16,
         val useHeapBuffer: Boolean = false,
-        val bufferInitialCapacity: Int = 4096
+        val bufferInitialCapacity: Int = 4096,
+        val parallelWriteThreads: Int = 1
 ) {
 
     fun writeToModFile() {
@@ -43,6 +46,8 @@ class ConfigFile(
     companion object {
         private val DEFAULT = ConfigFile()
         private val CONFIG_JSON = File(FileUtil.configDirectoryInstance, "config.json")
+        private val LOGGER: Logger = LogManager.getLogger()
+
         val configuration: ConfigFile = deserialize() // deserialize once
 
         private fun deserialize(): ConfigFile {
@@ -62,13 +67,13 @@ class ConfigFile(
                                 Int::class.createType() -> {
                                     val toEntry: Any = value?.asInt ?: Int::class.cast(def)
                                     propMap[name] = toEntry
-                                    println("Deserialized $name to $toEntry")
+                                    LOGGER.info("Deserialized $name to $toEntry")
                                 }
 
                                 Boolean::class.createType() -> {
                                     val toEntry: Any = value?.asBoolean ?: Boolean::class.cast(def)
                                     propMap[name] = toEntry
-                                    println("Deserialized $name to $toEntry")
+                                    LOGGER.info("Deserialized $name to $toEntry")
                                 }
 
                                 else -> throw ClassCastException("Property $name expects ${it.returnType}.")
@@ -85,9 +90,8 @@ class ConfigFile(
                 }
             }
 
-            return config.also {
-                it.writeToModFile()
-            }
+            config.writeToModFile()
+            return config
         }
 
         private fun getOrNullPrimitive(field: String, jsonObject: JsonObject): JsonPrimitive? {
@@ -95,8 +99,7 @@ class ConfigFile(
             return if (get == null || get.isJsonNull || !get.isJsonPrimitive) null else get.asJsonPrimitive
         }
 
-        @Suppress("UNCHECKED_CAST")
-        operator fun <T> getValue(any: Any, property: KProperty<*>): T {
+        inline operator fun <reified T> getValue(any: Any, property: KProperty<*>): T {
             return ConfigFile::class.memberProperties.first { it.name == property.name }.get(configuration) as T
         }
     }

@@ -11,10 +11,11 @@ object PlayData : ModInitializer, ClientModInitializer {
 
     override fun onInitialize() {
         CommandUtil.initMain()
-        logger.info(ConfigFile.configuration.toString())
+        logger.info("Initialized PlayData main")
     }
 
     override fun onInitializeClient() {
         CommandUtil.initClient()
+        logger.info("Initialized PlayData client")
     }
 }

@@ -30,7 +30,7 @@ object LogUtil {
 
     private fun consume() {
         val consumer = LogRingBuffer
-        FileOutputStream(FileUtil.logDestinationByte, true).use {
+        FileOutputStream(consumer.nextFileWrite(), true).use {
             it.channel.use { ch -> ch.write(consumer.toByteBuffer()) }
         }
         consumer.consume()
