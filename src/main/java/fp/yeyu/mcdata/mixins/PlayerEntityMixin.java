@@ -3,22 +3,20 @@ package fp.yeyu.mcdata.mixins;
 import fp.yeyu.mcdata.data.EncodingKey;
 import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
-import fp.yeyu.mcdata.interfaces.SerializationContext;
 import fp.yeyu.mcdata.interfaces.IntIdentifiable;
-import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
+import fp.yeyu.mcdata.interfaces.SerializationContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +33,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 	@Shadow
 	public ScreenHandler currentScreenHandler;
 
+	@Shadow
+	protected HungerManager hungerManager;
+
 	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
 	}
@@ -50,6 +51,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.POSITION.serialize(writer);
 		((ByteSerializable) getPos()).serialize(writer);
 
+		EncodingKey.HEALTH.serialize(writer);
+		writer.push(getHealth());
+		writer.push(hungerManager.getFoodLevel());
 
 		Entity camera;
 		if (world.isClient) {
