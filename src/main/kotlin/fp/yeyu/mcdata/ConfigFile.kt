@@ -21,7 +21,8 @@ class ConfigFile(
         val ringBufferSize: Int = 16,
         val useHeapBuffer: Boolean = false,
         val bufferInitialCapacity: Int = 4096,
-        val parallelWriteThreads: Int = 1
+        val parallelWriteThreads: Int = 1,
+        val writeMillisecondSleep: Int = 100
 ) {
 
     fun writeToModFile() {

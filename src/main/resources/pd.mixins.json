@@ -12,6 +12,7 @@
     "ItemMixin",
     "MinecraftClientMixin",
     "PlayerEntityMixin",
+    "ScreenHandlerMixin",
     "ScreenHandlerTypeMixin",
     "Vec3dMixin",
     "WorldMixin"

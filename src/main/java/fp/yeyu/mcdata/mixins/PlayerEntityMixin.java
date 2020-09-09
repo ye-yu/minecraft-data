@@ -5,6 +5,7 @@ import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
 import fp.yeyu.mcdata.interfaces.IntIdentifiable;
+import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.enchantment.Enchantment;
@@ -17,6 +18,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,20 +79,30 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		writer.push(inventory.selectedSlot);
 
 		/* todo: mouse, menu inventory, cursor slot */
-		IntIdentifiable screenHandler = getSerializableScreenHandler();
+		ScreenHandler screenHandler = getSerializableScreenHandler();
 
-		if (screenHandler != null) {
-			serializeMenu(writer, screenHandler);
+		if (screenHandler == null) return;
+
+		if (screenHandler.getType() != null) {
+			serializeMenu(writer, ((IntIdentifiable) screenHandler.getType()));
+		} else {
+			serializeCreativeMenu(writer, screenHandler);
 		}
 	}
 
-	private IntIdentifiable getSerializableScreenHandler() {
+	private void serializeCreativeMenu(ByteQueue writer, ScreenHandler screenHandler) {
+		EncodingKey.MENU.serialize(writer);
+		writer.push(-1);
+	}
+
+	private ScreenHandler getSerializableScreenHandler() {
 		if (world.isClient) {
-			if (MinecraftClient.getInstance().currentScreen instanceof HandledScreen)
-				return ((IntIdentifiable) ((HandledScreen<?>) MinecraftClient.getInstance().currentScreen).getScreenHandler());
+			if (MinecraftClient.getInstance().currentScreen instanceof HandledScreen) {
+				return ((HandledScreen<?>) MinecraftClient.getInstance().currentScreen).getScreenHandler();
+			}
 		}
 
-		if (!world.isClient) return ((IntIdentifiable) currentScreenHandler);
+		if (!world.isClient) return currentScreenHandler;
 		return null;
 	}
 

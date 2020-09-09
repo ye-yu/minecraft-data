@@ -99,17 +99,15 @@ object LogRingBuffer : ByteQueue {
     fun publish() {
         val next = (writerPointer + 1) % ringBufferSize
         if (next != readerPointer) {
-            logger.info("Published $writerPointer, now ready for $next")
             writerPointer = next
         } else if (warn) {
             warn = false
-            logger.warn("Reader too slow! Writer may overwrite next publish. Set a larger ring size?")
+            logger.warn("Reader too slow / died!")
         }
     }
 
     fun consume() {
         if (readerPointer == writerPointer) throw NoSuchElementException("Writer has not published the next value yet.")
-        logger.info("Consuming $readerPointer")
         flushReader()
         readerPointer = (++readerPointer) % ringBufferSize
     }

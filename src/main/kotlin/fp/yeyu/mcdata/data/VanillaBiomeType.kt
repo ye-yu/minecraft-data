@@ -92,6 +92,6 @@ enum class VanillaBiomeType(val biomeKey: RegistryKey<Biome>) : ByteSerializable
     }
 
     companion object {
-        operator fun get(biomeKey: RegistryKey<Biome>): VanillaBiomeType = values().first { it.biomeKey == biomeKey.value }
+        operator fun get(biomeKey: RegistryKey<Biome>): VanillaBiomeType = values().first { it.biomeKey == biomeKey }
     }
 }

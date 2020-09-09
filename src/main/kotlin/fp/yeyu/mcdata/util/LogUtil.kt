@@ -3,6 +3,7 @@ package fp.yeyu.mcdata.util
 import fp.yeyu.mcdata.LogRingBuffer
 import fp.yeyu.mcdata.VariableByteBuf
 import fp.yeyu.mcdata.data.EncodingKey
+import fp.yeyu.mcdata.thread.PlayDataGroup
 import io.netty.buffer.Unpooled
 import net.minecraft.client.MinecraftClient
 import java.io.FileOutputStream
@@ -15,7 +16,7 @@ object LogUtil {
     fun onPublishRequest() = Thread(PlayDataGroup, this::publish).start()
     fun onConsumeRequest() = Thread(PlayDataGroup, this::consume).start()
 
-    private fun publish() {
+    fun publish() {
         val player = MinecraftClient.getInstance().player ?: return
         val publisher = LogRingBuffer
         EncodingKey.START.serialize(publisher)
@@ -28,7 +29,7 @@ object LogUtil {
         publisher.publish()
     }
 
-    private fun consume() {
+    fun consume() {
         val consumer = LogRingBuffer
         FileOutputStream(consumer.nextFileWrite(), true).use {
             it.channel.use { ch -> ch.write(consumer.toByteBuffer()) }

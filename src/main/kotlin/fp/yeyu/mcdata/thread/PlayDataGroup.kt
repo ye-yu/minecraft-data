@@ -1,3 +1,3 @@
-package fp.yeyu.mcdata.util
+package fp.yeyu.mcdata.thread
 
 object PlayDataGroup : ThreadGroup("play data")

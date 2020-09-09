@@ -9,9 +9,9 @@ object FileUtil {
     private const val modDirectory = "./mods/Play Data"
     private const val logDirectory = "log"
     private const val convertedLogDirectory = "finished"
-    val logDestination by lazy { createLogDestination() }
-    val logDestinationByte by lazy { createLogByteDestination() }
-    val parallelDestinationByte by lazy { Array(LogRingBuffer.parallelWriteThreads, FileUtil::createLogByteDestination) }
+    var logDestination = createLogDestination()
+    var logDestinationByte = createLogByteDestination()
+    var parallelDestinationByte = Array(LogRingBuffer.parallelWriteThreads, FileUtil::createLogByteDestination)
 
     val logDirectoryInstance = File(modDirectory, logDirectory).also {
         createDirsOrFailIfNotExists(it)
@@ -36,5 +36,11 @@ object FileUtil {
 
     private fun createLogDestination(): File = File(logDirectoryInstance, "${System.currentTimeMillis()}.log")
     private fun createLogByteDestination(ordinal: Int? = null): File = File(logDirectoryInstance, "${System.currentTimeMillis()}${ordinal ?: ""}.dat")
+    
+    fun refreshDestinationNames() {
+        logDestination = createLogDestination()
+        logDestinationByte = createLogByteDestination()
+        parallelDestinationByte = Array(LogRingBuffer.parallelWriteThreads, FileUtil::createLogByteDestination)
+    }
 
 }
