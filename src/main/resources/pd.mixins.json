@@ -9,6 +9,7 @@
     "EntityTypeMixin",
     "InventoryMixin",
     "ItemMixin",
+    "MinecraftClientMixin",
     "PlayerEntityMixin",
     "ScreenHandlerTypeMixin",
     "Vec3dMixin"
