@@ -12,7 +12,7 @@ object Consumer {
 
     fun start() {
         Thread.sleep(sleep)
-        while(true) {
+        while (true) {
             if (pause) {
                 if (hasTerminate) continue
                 Thread.sleep(sleep)

@@ -16,7 +16,7 @@ object Publisher {
 
     fun start() {
         Thread.sleep(sleep)
-        while(true) {
+        while (true) {
             if (sleepTemp) {
                 Thread.sleep(sleep)
                 sleepTemp = false

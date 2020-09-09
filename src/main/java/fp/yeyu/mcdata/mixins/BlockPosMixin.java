@@ -2,8 +2,8 @@ package fp.yeyu.mcdata.mixins;
 
 import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
-import fp.yeyu.mcdata.interfaces.SerializationContext;
 import fp.yeyu.mcdata.interfaces.IntIdentifiable;
+import fp.yeyu.mcdata.interfaces.SerializationContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

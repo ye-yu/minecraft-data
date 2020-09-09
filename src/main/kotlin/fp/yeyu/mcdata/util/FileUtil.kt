@@ -36,7 +36,7 @@ object FileUtil {
 
     private fun createLogDestination(): File = File(logDirectoryInstance, "${System.currentTimeMillis()}.log")
     private fun createLogByteDestination(ordinal: Int? = null): File = File(logDirectoryInstance, "${System.currentTimeMillis()}${ordinal ?: ""}.dat")
-    
+
     fun refreshDestinationNames() {
         logDestination = createLogDestination()
         logDestinationByte = createLogByteDestination()

@@ -4,7 +4,6 @@ import com.google.gson.stream.JsonWriter
 import fp.yeyu.mcdata.VariableByteBuf
 import fp.yeyu.mcdata.data.EncodingKey
 import fp.yeyu.mcdata.interfaces.ByteQueue
-import fp.yeyu.mcdata.test.DecodingTest
 import fp.yeyu.mcdata.util.FileUtil
 import io.netty.buffer.Unpooled
 import org.apache.commons.io.FileUtils

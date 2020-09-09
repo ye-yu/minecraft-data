@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin implements PlayDataState {
 
-	@Shadow public ClientWorld world;
+	@Shadow
+	public ClientWorld world;
 	private boolean hasNotLogged = true; // first loading must be exited
 	private World previousWorld = null;
 
