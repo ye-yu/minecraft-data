@@ -8,6 +8,7 @@
     "BlockPosMixin",
     "EntityMixin",
     "EntityTypeMixin",
+    "ScreenMixin",
     "InventoryMixin",
     "ItemMixin",
     "MinecraftClientMixin",

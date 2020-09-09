@@ -23,13 +23,14 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser = object : Byt
     INVENTORY(11, InventoryByteParser),
     BLOCKS(12, BlocksByteParser),
     MENU(13, MenuByteParser),
-    MOUSE(14),
-    KEYBOARD(15),
+    MOUSE(14, MouseByteParser),
+    KEYBOARD(15, KeyboardByteParser),
     ITEM_SLOTS(16),
     CURSOR_SLOTS(17),
     BIOME(18, BiomeByteParser),
     HEALTH(19, HealthByteParser),
     EFFECT(20),
+    MOUSE_POSITION(21, MousePositionByteParser),
     END(Byte.MAX_VALUE, EndByteParser),
     EOF(-1);
 

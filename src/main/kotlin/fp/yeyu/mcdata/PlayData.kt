@@ -43,6 +43,7 @@ object PlayData : ModInitializer, ClientModInitializer {
                         Publisher.startTracking = false
                         logger.info("Converting byte data...")
                         Parser.start()
+                        logger.info("Completed.")
                     }.start()
                 } else {
                     if (!publisherThread.startIfNotAlive()) publisherThread = emptyThread

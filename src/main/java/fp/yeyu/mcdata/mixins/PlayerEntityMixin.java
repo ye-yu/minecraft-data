@@ -4,6 +4,7 @@ import fp.yeyu.mcdata.data.EncodingKey;
 import fp.yeyu.mcdata.interfaces.ByteQueue;
 import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.IntIdentifiable;
+import fp.yeyu.mcdata.interfaces.KeyLogger;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -23,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.ArrayList;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements ByteSerializable, SerializationContext {
@@ -89,6 +92,28 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		} else {
 			serializeCreativeMenu(writer, screenHandler);
 		}
+
+		final KeyLogger keyLogger = (KeyLogger) MinecraftClient.getInstance().currentScreen;
+		if (keyLogger == null) return;
+		final ArrayList<Integer> pressedKeys = keyLogger.getPressedKeys();
+
+		if (!pressedKeys.isEmpty()) {
+			EncodingKey.KEYBOARD.serialize(writer);
+			writer.push(pressedKeys.size());
+			pressedKeys.forEach(writer::push);
+		}
+
+		final ArrayList<Integer> pressedMouseButton = keyLogger.getPressedMouseButton();
+		if (!pressedMouseButton.isEmpty()) {
+			EncodingKey.MOUSE.serialize(writer);
+			writer.push(pressedMouseButton.size());
+			pressedMouseButton.forEach(writer::push);
+			pressedMouseButton.clear();
+		}
+
+		EncodingKey.MOUSE_POSITION.serialize(writer);
+		writer.push(keyLogger.getMouseX());
+		writer.push(keyLogger.getMouseY());
 	}
 
 	private void serializeCreativeMenu(ByteQueue writer, ScreenHandler screenHandler) {
