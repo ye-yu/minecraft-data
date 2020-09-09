@@ -3,7 +3,6 @@ package fp.yeyu.mcdata.mixins;
 import fp.yeyu.mcdata.interfaces.KeyLogger;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.screen.Screen;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,20 +41,17 @@ public abstract class ScreenMixin extends AbstractParentElement implements KeyLo
 
 	@Inject(method = "keyPressed", at = @At("HEAD"))
 	void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-		System.out.println("Pressed " + keyCode);
 		if (!pressedKeys.contains(keyCode)) pressedKeys.add(keyCode);
 	}
 
 	@Override
 	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-		System.out.println("Released " + keyCode);
 		pressedKeys.remove(Integer.valueOf(keyCode));
 		return super.keyReleased(keyCode, scanCode, modifiers);
 	}
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		System.out.println("Mouse down " + button);
 		if (!mouseButton.contains(button)) mouseButton.add(button);
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
@@ -64,9 +60,7 @@ public abstract class ScreenMixin extends AbstractParentElement implements KeyLo
 
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		System.out.println("Mouse up " + button);
 		mouseButton.remove(Integer.valueOf(button));
-		System.out.println("Now mouse button contains " + StringUtils.join(mouseButton, ","));
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		return super.mouseReleased(mouseX, mouseY, button);
