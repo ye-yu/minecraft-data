@@ -47,9 +47,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.BIOME.serialize(writer);
 		((ByteSerializable) (Object) world.getBiome(getBlockPos())).serialize(writer, this);
 
-		EncodingKey.UUID.serialize(writer);
-		writer.push(uuid);
-
 		EncodingKey.POSITION.serialize(writer);
 		((ByteSerializable) getPos()).serialize(writer);
 
