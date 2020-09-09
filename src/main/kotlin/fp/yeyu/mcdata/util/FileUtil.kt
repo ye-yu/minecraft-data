@@ -21,7 +21,7 @@ object FileUtil {
         createDirsOrFailIfNotExists(it)
     }
 
-    val convertedLogDirectoryInstance = File(modDirectory, convertedLogDirectory).also {
+    val convertedLogDirectoryInstance = File(logDirectoryInstance, convertedLogDirectory).also {
         createDirsOrFailIfNotExists(it)
     }
 
