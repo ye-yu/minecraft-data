@@ -6,7 +6,5 @@ import fp.yeyu.mcdata.interfaces.ByteQueue
 object StartByteParser : ByteParser {
     override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
         jsonWriter.beginObject()
-        jsonWriter.name("log")
-        jsonWriter.value("local")
     }
 }
