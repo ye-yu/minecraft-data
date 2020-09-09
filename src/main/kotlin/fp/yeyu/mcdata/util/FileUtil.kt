@@ -6,7 +6,7 @@ import java.io.IOException
 
 object FileUtil {
 
-    private const val modDirectory = "./mods/"
+    private const val modDirectory = "./mods/Play Data"
     private const val logDirectory = "log"
     private const val convertedLogDirectory = "finished"
     val logDestination by lazy { createLogDestination() }
