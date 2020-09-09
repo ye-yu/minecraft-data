@@ -126,7 +126,8 @@ object LogRingBuffer : ByteQueue {
 
     fun nextFileWrite(): File {
         if (parallelWriteThreads == 1) return FileUtil.logDestinationByte
+        val next = fileWriterPointer
         fileWriterPointer = ++fileWriterPointer % parallelWriteThreads
-        return FileUtil.parallelDestinationByte[fileWriterPointer]
+        return FileUtil.parallelDestinationByte[next]
     }
 }
