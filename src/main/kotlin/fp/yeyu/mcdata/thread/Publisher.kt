@@ -23,13 +23,12 @@ object Publisher {
             }
 
             if (!startTracking) continue
-            publish()
+            LogUtil.publish()
             Thread.sleep(sleep)
         }
     }
 
-    fun publish() {
-        LogUtil.publish()
+    fun reset() {
+        startTracking = false
     }
-
 }

@@ -11,6 +11,8 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,6 +28,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements ByteSerializable, SerializationContext {
@@ -57,6 +60,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.HEALTH.serialize(writer);
 		writer.push(getHealth());
 		writer.push(hungerManager.getFoodLevel());
+
+		final Map<StatusEffect, StatusEffectInstance> activeStatusEffects = getActiveStatusEffects();
+		if (!activeStatusEffects.isEmpty()) {
+			EncodingKey.EFFECT.serialize(writer);
+			writer.push(activeStatusEffects.size());
+			activeStatusEffects.forEach((effect, instance) -> {
+				writer.push(StatusEffect.getRawId(effect));
+				writer.push(instance.getDuration());
+			});
+		}
 
 		Entity camera;
 		if (world.isClient) {

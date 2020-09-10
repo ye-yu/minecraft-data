@@ -36,7 +36,7 @@ object PlayData : ModInitializer, ClientModInitializer {
             if (state.worldHasChanged() && state.hasNotLogged()) {
                 state.setHasNotLogged(false)
                 if (it.world == null) {
-                    Thread {
+                    Thread(PlayDataGroup, {
                         @Suppress("ControlFlowWithEmptyBody")
                         while (Consumer.pause());
                         logger.info("Player exited the world. Disabling publisher...")
@@ -44,11 +44,11 @@ object PlayData : ModInitializer, ClientModInitializer {
                         logger.info("Converting byte data...")
                         Parser.start()
                         logger.info("Completed.")
-                    }.start()
+                    }, "parser thread").start()
                 } else {
                     if (!publisherThread.startIfNotAlive()) publisherThread = emptyThread
                     if (!consumerThread.startIfNotAlive()) consumerThread = emptyThread
-                    logger.info("Player entered a world. Kick-starting publisher...")
+                    logger.info("Player entered a world. Starting publisher...")
                     Publisher.startTracking = true
                     logger.info("Starting consumer...")
                     Consumer.resume()
@@ -59,15 +59,17 @@ object PlayData : ModInitializer, ClientModInitializer {
     }
 
     private fun Thread.startIfNotAlive(): Boolean {
-        if (isAlive) return true
         if (state != Thread.State.NEW) {
             logger.error("Cannot start thread $name: State is in $state")
             logger.info(stackTrace.joinToString(",\n") { it.className })
             return false
         }
-        logger.info("(Re)started thread: $name")
-        logger.info(stackTrace.joinToString(",\n") { it.className })
-        start()
+
+        if (!isAlive) {
+            logger.info("(Re)started thread: $name")
+            logger.info(stackTrace.joinToString(",\n") { it.className })
+            start()
+        }
         return true
     }
 }

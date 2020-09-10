@@ -34,4 +34,9 @@ object Consumer {
     fun resume() {
         pause = false
     }
+
+    fun reset() {
+        pause = false
+        hasTerminate = true
+    }
 }

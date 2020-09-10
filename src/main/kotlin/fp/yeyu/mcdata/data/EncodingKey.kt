@@ -29,7 +29,7 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser = object : Byt
     CURSOR_SLOTS(17),
     BIOME(18, BiomeByteParser),
     HEALTH(19, HealthByteParser),
-    EFFECT(20),
+    EFFECT(20, StatusEffectByteParser),
     MOUSE_POSITION(21, MousePositionByteParser),
     END(Byte.MAX_VALUE, EndByteParser),
     EOF(-1);
