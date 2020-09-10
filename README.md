@@ -21,6 +21,7 @@ below.
 
 # Table of content
 
+  - [Download](#download)
   - [How it works](#how-it-works)
   - [Configuration](#configuration)
   - [Documentation](#documentation)
@@ -29,7 +30,12 @@ below.
   - [Future Plan](#future-plan)
   - [Other source](#other-source)
 
-## <a href="#" name="how-it-works"></a>  How it works
+## <a href="#" name="download"></a> Download
+
+The mod file can be obtained from the [release](https://github.com/ye-yu/minecraft-data/releases) page.
+In addition, the CurseForge page is [here](https://www.curseforge.com/minecraft/mc-mods/play-data).
+
+## <a href="#" name="how-it-works"></a> How it works
 
 v0.0.1 spawns two threads: a publisher thread, and a consumer thread.
 A publisher thread publishes the data periodically into a shared ring buffer
