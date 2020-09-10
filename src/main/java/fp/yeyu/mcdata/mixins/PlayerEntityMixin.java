@@ -55,6 +55,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 	@Shadow
 	public abstract boolean isCreative();
 
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	public void serialize(@NotNull ByteQueue writer) {
 		EncodingKey.WORLD.serialize(writer);
