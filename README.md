@@ -134,12 +134,29 @@ byte keys:
 | MOUSE_POSITION | x: Double, y: Double | 
 | MENU_SLOTS | size: Int, (slot: Int, count: Int, itemId: Int) <- for `size` times* | 
 | MENU_CURSOR_SLOT | count: Int, itemId: Int | 
-| ACTION | actionId: Int | 
+| ACTION | size: Int, (actionId: Int) <- for `size` times* | 
 | MOBS | size: Int, (mobId: Int, x: Double, y: Double, z: Double) <- for `size` times* | 
 | BLOCKS | size: Int, (blockId: Int, x: Int, y: Int, z: Int) <- for `size` times* | 
 | END | *None* | 
 
 <small>*"for `size` times" means the operation is to be repeated `size` times.</small>
+
+For example, the following is the minimal byte data.
+
+```byte
+01 18 02 07 08 -2
+```
+
+When converted, the byte data is translated as follows:
+
+```byte
+01 - START
+18 - ACTION
+02 - "there are 2 ints following this"
+07 - "an actionId"
+08 - "an actionId"
+-1 - END
+```
 
 The tabulated decoding strategy above is also applied in the conversion to `json`.
 See the decoder [here](src/main/kotlin/fp/yeyu/mcdata/data/decoder/Decoder.kt).
@@ -169,7 +186,7 @@ during each capture instance:
   16. `ACTION`- Filter out the bound game key from the enum class [`GameKey`](src/main/kotlin/fp/yeyu/mcdata/data/GameKey.kt) that is not pressed as a list. If the list is not empty, then push the size of the list and then the enum ordinal.
   17. `MOBS` - Obtain loaded mobs from `World.getEntitiesByClass`. Filter out mobs that is not in the camera's field of view and each corner of the mob's bounding box is not visible. The mob visibility is determined by the ray cast of the bounding box to the camera entity. It is considered as visible if the ray does not collide with any solid block.
   18. `BLOCKS` - Obtain the block in a square of the axis (x, z) centered at the camera position, and then at each block position, find the direct block above and below the block position. Store all blocks in a list and then filter out the blocks the is not in the player's field of view and not visible. If the list is not empty, then push the size of the list and then the block id with their block position.
-  
+
 The capturing strategy may not be optimum. If there are 
 better solution, feel free to open an issue in the issue tracker.
 
