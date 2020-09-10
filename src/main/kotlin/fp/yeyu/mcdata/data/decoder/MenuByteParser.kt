@@ -14,13 +14,19 @@ object MenuByteParser : ByteParser {
         if (ConfigFile.configuration.useRawId) {
             jsonWriter.value(menuId)
         } else {
-            if (menuId == -1) {
-                jsonWriter.nullValue()
-            } else {
-                Bootstrap.initialize()
-                val screenHandlerType = Registry.SCREEN_HANDLER[menuId]
-                val id = Registry.SCREEN_HANDLER.getId(screenHandlerType)
-                jsonWriter.value(id.toString())
+            when (menuId) {
+                -1 -> {
+                    jsonWriter.value("survival_inventory")
+                }
+                -2 -> {
+                    jsonWriter.value("creative_inventory")
+                }
+                else -> {
+                    Bootstrap.initialize()
+                    val screenHandlerType = Registry.SCREEN_HANDLER[menuId]
+                    val id = Registry.SCREEN_HANDLER.getId(screenHandlerType)
+                    jsonWriter.value(id.toString())
+                }
             }
         }
     }

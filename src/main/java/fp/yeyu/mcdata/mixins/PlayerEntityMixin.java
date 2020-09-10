@@ -6,6 +6,7 @@ import fp.yeyu.mcdata.interfaces.ByteSerializable;
 import fp.yeyu.mcdata.interfaces.IntIdentifiable;
 import fp.yeyu.mcdata.interfaces.KeyLogger;
 import fp.yeyu.mcdata.interfaces.SerializationContext;
+import kotlin.Pair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.Entity;
@@ -16,7 +17,9 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -28,7 +31,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements ByteSerializable, SerializationContext {
@@ -45,6 +51,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
 	}
+
+	@Shadow
+	public abstract boolean isCreative();
 
 	@Override
 	public void serialize(@NotNull ByteQueue writer) {
@@ -95,13 +104,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.CURSOR.serialize(writer);
 		writer.push(inventory.selectedSlot);
 
-		/* todo: mouse, menu inventory, cursor slot */
 		ScreenHandler screenHandler = getSerializableScreenHandler();
 
 		if (screenHandler == null) return;
 
 		if (screenHandler.getType() != null) {
-			serializeMenu(writer, ((IntIdentifiable) screenHandler.getType()));
+			serializeMenu(writer, ((IntIdentifiable) screenHandler.getType()), screenHandler);
 		} else {
 			serializeCreativeMenu(writer, screenHandler);
 		}
@@ -131,7 +139,45 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 
 	private void serializeCreativeMenu(ByteQueue writer, ScreenHandler screenHandler) {
 		EncodingKey.MENU.serialize(writer);
-		writer.push(-1);
+
+		if (isCreative()) writer.push(-2);
+		else writer.push(-1);
+
+		writeScreenHandlerSlots(writer, screenHandler);
+	}
+
+	private void serializeMenu(ByteQueue writer, IntIdentifiable screenIdentifiable, ScreenHandler screenHandler) {
+		EncodingKey.MENU.serialize(writer);
+		writer.push(screenIdentifiable.getSelfRawId());
+		writeScreenHandlerSlots(writer, screenHandler);
+	}
+
+	private void writeScreenHandlerSlots(ByteQueue writer, ScreenHandler screenHandler) {
+		final ItemStack cursorStack = inventory.getCursorStack();
+		if (!cursorStack.isEmpty()) {
+			EncodingKey.MENU_CURSOR_SLOT.serialize(writer);
+			writer.push(cursorStack.getCount());
+			writer.push(((IntIdentifiable) cursorStack.getItem()).getSelfRawId());
+		}
+
+		final int extraSlots = screenHandler.slots.size() - inventory.main.size();
+		if (extraSlots <= 0) return;
+		final List<Pair<Integer, Slot>> slots = IntStream
+				.range(0, extraSlots)
+				.mapToObj(slot -> new Pair<>(slot, screenHandler.slots.get(slot)))
+				.filter((pair -> !pair.getSecond().getStack().isEmpty())).collect(Collectors.toList());
+		if (!slots.isEmpty()) {
+			EncodingKey.MENU_SLOTS.serialize(writer);
+			writer.push(slots.size());
+			slots.forEach(pair -> {
+				final int slotNumber = pair.getFirst();
+				final Slot slot = pair.getSecond();
+				final ItemStack stack = slot.getStack();
+				writer.push(slotNumber);
+				writer.push(stack.getCount());
+				writer.push(((IntIdentifiable) stack.getItem()).getSelfRawId());
+			});
+		}
 	}
 
 	private ScreenHandler getSerializableScreenHandler() {
@@ -143,11 +189,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 
 		if (!world.isClient) return currentScreenHandler;
 		return null;
-	}
-
-	private void serializeMenu(ByteQueue buffer, IntIdentifiable screenIdentifiable) {
-		EncodingKey.MENU.serialize(buffer);
-		buffer.push(screenIdentifiable.getSelfRawId());
 	}
 
 	@NotNull

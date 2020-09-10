@@ -46,7 +46,9 @@ class ConfigFile(
 
     companion object {
         private val DEFAULT = ConfigFile()
-        private val CONFIG_JSON = File(FileUtil.configDirectoryInstance, "config.json")
+        private val CONFIG_JSON = File(FileUtil.modDirectory, "config.json").also {
+            println("Finding config.json at $it")
+        }
         private val LOGGER: Logger = LogManager.getLogger()
 
         val configuration: ConfigFile = deserialize() // deserialize once

@@ -6,7 +6,7 @@ import java.io.IOException
 
 object FileUtil {
 
-    private const val modDirectory = "./mods/Play Data"
+    const val modDirectory = "./mods/Play Data"
     private const val logDirectory = "log"
     private const val convertedLogDirectory = "finished"
     var logDestination = createLogDestination()
@@ -14,18 +14,18 @@ object FileUtil {
     var parallelDestinationByte = Array(LogRingBuffer.parallelWriteThreads, FileUtil::createLogByteDestination)
 
     val logDirectoryInstance = File(modDirectory, logDirectory).also {
-        createDirsOrFailIfNotExists(it)
+        createDirsIfNotExistsOrFail(it)
     }
 
     val configDirectoryInstance = File(modDirectory).also {
-        createDirsOrFailIfNotExists(it)
+        createDirsIfNotExistsOrFail(it)
     }
 
     val convertedLogDirectoryInstance = File(logDirectoryInstance, convertedLogDirectory).also {
-        createDirsOrFailIfNotExists(it)
+        createDirsIfNotExistsOrFail(it)
     }
 
-    private fun createDirsOrFailIfNotExists(file: File) {
+    private fun createDirsIfNotExistsOrFail(file: File) {
         if (file.exists()) {
             if (file.isFile) throw FileAlreadyExistsException(file)
             else return

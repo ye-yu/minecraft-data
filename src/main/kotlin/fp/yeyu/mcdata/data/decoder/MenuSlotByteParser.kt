@@ -6,33 +6,32 @@ import fp.yeyu.mcdata.interfaces.ByteQueue
 import net.minecraft.Bootstrap
 import net.minecraft.util.registry.Registry
 
-object StatusEffectByteParser : ByteParser {
+object MenuSlotByteParser : ByteParser {
     override fun decode(queue: ByteQueue, jsonWriter: JsonWriter) {
-        jsonWriter.name("effect")
+        jsonWriter.name("menu_inventory")
 
         val size = queue.popInt()
-
         jsonWriter.beginArray()
-
         repeat(size) {
             jsonWriter.beginObject()
-            jsonWriter.name("id")
-
-            val effectId = queue.popInt()
-            if (ConfigFile.configuration.useRawId) {
-                Bootstrap.initialize()
-                val statusEffect = Registry.STATUS_EFFECT[effectId]
-                val id = Registry.STATUS_EFFECT.getId(statusEffect)
-                jsonWriter.value(id.toString())
-            } else {
-                jsonWriter.value(effectId)
-            }
-
-            jsonWriter.name("duration")
+            jsonWriter.name("slot")
             jsonWriter.value(queue.popInt())
+            jsonWriter.name("count")
+            jsonWriter.value(queue.popInt())
+            jsonWriter.name("item_id")
+
+            val itemId = queue.popInt()
+
+            if (ConfigFile.configuration.useRawId) {
+                jsonWriter.value(itemId)
+            } else {
+                Bootstrap.initialize()
+                val item = Registry.ITEM[itemId]
+                val id = Registry.ITEM.getId(item)
+                jsonWriter.value(id.toString())
+            }
             jsonWriter.endObject()
         }
-
         jsonWriter.endArray()
     }
 
