@@ -11,31 +11,30 @@ enum class EncodingKey(val byte: Byte, val byteParser: ByteParser = object : Byt
 }) : ByteSerializable {
     BUFFER(0),
     START(1, StartByteParser),
-    WORLD(2, WorldByteParser),
-    TIME(3, TimestampByteParser),
-    UUID(4, UUIDByteParser),
+    TIME(2, TimestampByteParser),
+    WORLD(3, WorldByteParser),
+    BIOME(4, BiomeByteParser),
     POSITION(5, PositionByteParser),
     ROTATION(6, RotationByteParser),
-    FOCUS(7, FocusByteParser),
-    ACTION(8, ActionByteParser),
-    MOBS(9, MobsByteParser),
-    CURSOR(10, HotBarCursorByteParser),
-    INVENTORY(11, InventoryByteParser),
-    BLOCKS(12, BlocksByteParser),
-    MENU(13, MenuByteParser),
+    HEALTH(7, HealthByteParser),
+    EFFECT(8, StatusEffectByteParser),
+    FOCUS(9, FocusByteParser),
+    INVENTORY(10, InventoryByteParser),
+    HOTBAR(11, HotBarCursorByteParser),
+    MENU(12, MenuByteParser),
+    KEYBOARD(13, KeyboardByteParser),
     MOUSE(14, MouseByteParser),
-    KEYBOARD(15, KeyboardByteParser),
+    MOUSE_POSITION(15, MousePositionByteParser),
     MENU_SLOTS(16, MenuSlotByteParser),
     MENU_CURSOR_SLOT(17, CursorStackByteParser),
-    BIOME(18, BiomeByteParser),
-    HEALTH(19, HealthByteParser),
-    EFFECT(20, StatusEffectByteParser),
-    MOUSE_POSITION(21, MousePositionByteParser),
-    END(Byte.MAX_VALUE, EndByteParser),
+    ACTION(18, ActionByteParser),
+    MOBS(19, MobsByteParser),
+    BLOCKS(20, BlocksByteParser),
+    END(-2, EndByteParser),
     EOF(-1);
 
     companion object {
-        operator fun get(byte: Byte): EncodingKey = values().first { it.byte == byte }
+        operator fun get(byte: Byte): EncodingKey = values().firstOrNull { it.byte == byte } ?: BUFFER
     }
 
     override fun serialize(queue: ByteQueue) {

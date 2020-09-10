@@ -25,6 +25,8 @@ public class InventoryMixin implements ByteSerializable {
 				.mapToObj((it) -> new Pair<>(it, inv.getStack(it)))
 				.filter((it) -> !it.getSecond().isEmpty())
 				.collect(Collectors.toCollection(ArrayList::new));
+
+		if (itemStacks.isEmpty()) return;
 		writer.push(itemStacks.size());
 
 		for (Pair<Integer, ItemStack> pair : itemStacks) {

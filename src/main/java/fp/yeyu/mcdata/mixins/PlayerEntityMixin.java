@@ -67,6 +67,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.POSITION.serialize(writer);
 		((ByteSerializable) getPos()).serialize(writer);
 
+		Entity camera;
+		if (world.isClient) {
+			camera = getEither(MinecraftClient.getInstance().cameraEntity, this);
+		} else {
+			camera = ((ServerPlayerEntity) (Object) this).getCameraEntity();
+		}
+
+		EncodingKey.ROTATION.serialize(writer);
+		writer.push(camera.pitch);
+		writer.push(camera instanceof LivingEntity ? ((LivingEntity) camera).headYaw : camera.yaw);
+
 		EncodingKey.HEALTH.serialize(writer);
 		writer.push(getHealth());
 		writer.push(hungerManager.getFoodLevel());
@@ -81,17 +92,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 			});
 		}
 
-		Entity camera;
-		if (world.isClient) {
-			camera = getEither(MinecraftClient.getInstance().cameraEntity, this);
-		} else {
-			camera = ((ServerPlayerEntity) (Object) this).getCameraEntity();
-		}
-
-		EncodingKey.ROTATION.serialize(writer);
-		writer.push(camera.pitch);
-		writer.push(camera instanceof LivingEntity ? ((LivingEntity) camera).headYaw : camera.yaw);
-
 		final HitResult hitResult = camera.rayTrace(20.0, 0f, false);
 		if (hitResult.getType() == HitResult.Type.BLOCK) {
 			final ByteSerializable blockPos = (ByteSerializable) ((BlockHitResult) hitResult).getBlockPos();
@@ -102,7 +102,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		EncodingKey.INVENTORY.serialize(writer);
 		((ByteSerializable) inventory).serialize(writer);
 
-		EncodingKey.CURSOR.serialize(writer);
+		EncodingKey.HOTBAR.serialize(writer);
 		writer.push(inventory.selectedSlot);
 
 		ScreenHandler screenHandler = getSerializableScreenHandler();
