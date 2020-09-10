@@ -29,13 +29,13 @@ object PlayData : ModInitializer, ClientModInitializer {
         consumerThread = Thread(PlayDataGroup, { Consumer.start() }, "consumer thread")
 
         logger.info("Trying to parse any leftovers byte data.")
-        Parser.start()
+        if (ConfigFile.configuration.convertToJson) Parser.start()
         ClientTickEvents.END_CLIENT_TICK.register {
 
             val state = it as PlayDataState
             if (state.worldHasChanged() && state.hasNotLogged()) {
                 state.setHasNotLogged(false)
-                if (it.world == null) {
+                if (it.world == null && ConfigFile.configuration.convertToJson) {
                     Thread(PlayDataGroup, {
                         @Suppress("ControlFlowWithEmptyBody")
                         while (Consumer.pause());
