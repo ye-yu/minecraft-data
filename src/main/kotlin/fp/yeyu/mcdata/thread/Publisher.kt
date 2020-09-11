@@ -27,7 +27,7 @@ object Publisher {
             }
 
             if (!startTracking) continue
-            if (isScreenPaused) continue
+//            if (isScreenPaused) continue // fixme: why cannnooottttt
             LogUtil.publish()
             Thread.sleep(sleep)
         }

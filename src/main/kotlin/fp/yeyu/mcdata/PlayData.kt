@@ -5,26 +5,19 @@ import fp.yeyu.mcdata.thread.Consumer
 import fp.yeyu.mcdata.thread.Parser
 import fp.yeyu.mcdata.thread.PlayDataGroup
 import fp.yeyu.mcdata.thread.Publisher
-import fp.yeyu.mcdata.util.CommandUtil
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-object PlayData : ModInitializer, ClientModInitializer {
+object PlayData : ClientModInitializer {
     private val logger: Logger = LogManager.getLogger()
     private lateinit var publisherThread: Thread
     private lateinit var consumerThread: Thread
     private val emptyThread = Thread {}
 
-    override fun onInitialize() {
-        CommandUtil.initMain()
-        logger.info("Initialized PlayData main")
-    }
-
     override fun onInitializeClient() {
-        CommandUtil.initClient()
         publisherThread = Thread(PlayDataGroup, { Publisher.start() }, "publisher thread")
         consumerThread = Thread(PlayDataGroup, { Consumer.start() }, "consumer thread")
 

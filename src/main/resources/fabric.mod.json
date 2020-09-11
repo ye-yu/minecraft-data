@@ -11,16 +11,10 @@
     "homepage": "https://github.com/ye-yu",
     "sources": "https://github.com/ye-yu"
   },
-  "license": "CC0-1.0",
+  "license": "GPLv3",
   "icon": "assets/$modId/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      {
-        "adapter": "kotlin",
-        "value": "fp.yeyu.mcdata.PlayData"
-      }
-    ],
     "client": [
       {
         "adapter": "kotlin",
