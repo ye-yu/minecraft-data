@@ -89,10 +89,6 @@ object SightUtil {
         return true
     }
 
-    fun isBlockVisible2(camera: Entity, targetPos: BlockPos): Boolean {
-        return isBlockInFOV(camera, targetPos) && canSeeThroughEntityAt(camera, camera.pos, targetPos.toVed3d())
-    }
-
     private val blockIndices = IntArray(2) { it }
     private val blockCornerPermute: Array<IntArray> = IntStream.range(0, 2)
             .mapToObj { it to blockIndices }
