@@ -1,13 +1,11 @@
 package fp.yeyu.mcdata.util
 
-import fp.yeyu.mcdata.iteration.BlockPosRayIterShared
 import fp.yeyu.mcdata.iteration.Vec3dRayIterShared
 import net.minecraft.block.Material
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import net.minecraft.world.World
 import java.util.stream.IntStream
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -73,8 +71,9 @@ object SightUtil {
         return angle in 0.0..radian
     }
 
-    private fun wrapRadian(rad: Double): Double {
+    private tailrec fun wrapRadian(rad: Double): Double {
         if (rad > PI) return wrapRadian(rad - PI)
+        else if (rad < -PI) return wrapRadian(rad + PI)
         return rad
     }
 
@@ -90,14 +89,8 @@ object SightUtil {
         return true
     }
 
-    private fun canSeeThroughBlockAt(world: World, sourcePos: BlockPos, targetPos: BlockPos): Boolean {
-        for (rayBlock in BlockPosRayIterShared.new(sourcePos, targetPos)) {
-            val block = world.getBlockState(rayBlock)
-            if (block.material == Material.AIR) continue
-            if (block.isTranslucent(world, rayBlock)) continue
-            return false
-        }
-        return true
+    fun isBlockVisible2(camera: Entity, targetPos: BlockPos): Boolean {
+        return isBlockInFOV(camera, targetPos) && canSeeThroughEntityAt(camera, camera.pos, targetPos.toVed3d())
     }
 
     private val blockIndices = IntArray(2) { it }
@@ -123,7 +116,11 @@ object SightUtil {
 
         return isBlockInFOV(camera, targetPos) && blockCornerPermute
                 .map { BlockPos(xs[it[0]], ys[it[1]], zs[it[2]]) }
-                .any { canSeeThroughBlockAt(camera.world, camera.blockPos, it) }
+                .any { canSeeThroughEntityAt(camera, camera.pos, it.toVed3d()) }
     }
+
+
+    private fun BlockPos.toVed3d(): Vec3d = Vec3d(x.toDouble(), y.toDouble(), z.toDouble())
+
 
 }

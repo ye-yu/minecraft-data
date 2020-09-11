@@ -84,37 +84,41 @@ object ByteAttributeUtil {
         for (x in 0 until 2 * (distance + 1)) {
             for (z in 0 until 2 * (distance + 1)) {
                 contextBlockPos.set(startBlockPos.x + x, startBlockPos.y, startBlockPos.z + z)
-                getUpwardBlockPos(world, contextBlockPos, camera)?.let { blocks += it }
-                getDownwardBlockPos(world, contextBlockPos, camera)?.let { blocks += it }
+                blocks += getUpwardBlocks(world, contextBlockPos.mutableCopy(), camera)
+                blocks += getDownwardBlocks(world, contextBlockPos.mutableCopy(), camera)
             }
         }
 
         return blocks
     }
 
-    private fun getUpwardBlockPos(world: World, contextBlockPos: BlockPos.Mutable, camera: Entity): BlockPos? {
-        var toImmutable = contextBlockPos.toImmutable()
-        while (toImmutable.y != 250) {
-            val blockState = world.getBlockState(toImmutable)
-            if (blockState.isAir) {
-                toImmutable = toImmutable.up()
-                continue
+    private tailrec fun getUpwardBlocks(world: World, contextBlockPos: BlockPos.Mutable, camera: Entity, list: MutableList<BlockPos> = mutableListOf(), patience: Int = 5): MutableList<BlockPos> {
+        return if (contextBlockPos.y == 256) list
+        else {
+            var patienceMutable = patience - 1
+            if (!world.getBlockState(contextBlockPos).isAir && SightUtil.isBlockVisible(camera, contextBlockPos)) {
+                list += contextBlockPos.mutableCopy()
+                patienceMutable = 5
+            } else {
+                if (patience == 0) return list
             }
-            return if (SightUtil.isBlockVisible(camera, toImmutable)) toImmutable else null
+            getUpwardBlocks(world, contextBlockPos.also { it.y += 1 }, camera, list, patienceMutable)
         }
-        return null
     }
 
-    private fun getDownwardBlockPos(world: World, contextBlockPos: BlockPos.Mutable, camera: Entity): BlockPos? {
-        var toImmutable = contextBlockPos.toImmutable()
-        while (toImmutable.y != 0) {
-            val blockState = world.getBlockState(toImmutable)
-            if (blockState.isAir) {
-                toImmutable = toImmutable.down()
-                continue
+    private tailrec fun getDownwardBlocks(world: World, contextBlockPos: BlockPos.Mutable, camera: Entity, list: MutableList<BlockPos> = mutableListOf(), patience: Int = 5): MutableList<BlockPos> {
+        return if (contextBlockPos.y == 0) list
+        else {
+            var patienceMutable = patience - 1
+            if (!world.getBlockState(contextBlockPos).isAir && SightUtil.isBlockVisible(camera, contextBlockPos)) {
+                list += contextBlockPos.mutableCopy()
+                patienceMutable = 5
+            } else {
+                if (patience == 0) return list
             }
-            return if (SightUtil.isBlockVisible(camera, toImmutable)) toImmutable else null
+            getDownwardBlocks(world, contextBlockPos.also { it.y -= 1 }, camera, list, patienceMutable)
         }
-        return null
     }
+
+
 }
