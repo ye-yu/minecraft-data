@@ -64,11 +64,11 @@ object LogRingBuffer : ByteQueue {
     }
 
     override fun push(s: Short) {
-        ring[writerPointer].push(s.toInt())
+        ring[writerPointer].push(s)
     }
 
     override fun push(byte: Byte) {
-        ring[writerPointer].push(byte.toInt())
+        ring[writerPointer].push(byte)
     }
 
     override fun push(enum: Enum<*>) {
