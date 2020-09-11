@@ -85,7 +85,7 @@ and the encoded data is called a byte data.
 | 4 | BIOME | The biome type | 
 | 5 | POSITION | The position of the player | 
 | 6 | ROTATION | The pitch and yaw of the player | 
-| 7 | HEALTH | The health of the player | 
+| 7 | HEALTH | The heart and hunger level of the player | 
 | 8 | EFFECT | The list of status effect on the player | 
 | 9 | FOCUS | The target block of the player** | 
 | 10 | INVENTORY | The current player inventory** | 
@@ -104,7 +104,7 @@ and the encoded data is called a byte data.
 
 <small>*Is not present in the byte data</small>
 
-<small>*Is not present in the byte data if the data is not available</small>
+<small>**Is not present in the byte data if the data is not available</small>
 
 <small>^Pretty sure is not present in the byte data</small>
 
@@ -128,8 +128,8 @@ byte keys:
 | WORLD | worldId: Int | 
 | BIOME | biomeId: Int | 
 | POSITION | x: Double, y: Double, z: Double | 
-| ROTATION | Double, Double | 
-| HEALTH | Double Int | 
+| ROTATION | pitch: Double, yaw: Double | 
+| HEALTH | heart: Double, hunger: Int | 
 | EFFECT | size: Int, (effectId: Int, duration: Int) <- for `size` times* | 
 | FOCUS | blockId: Int, x: Int, y: Int, z: Int | 
 | INVENTORY | size: Int, (slot: Int, count: Int, itemId: Int) <- for `size` times* | 
