@@ -130,7 +130,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 			EncodingKey.MOUSE.serialize(writer);
 			writer.push(pressedMouseButton.size());
 			pressedMouseButton.forEach(writer::push);
-			pressedMouseButton.clear();
 		}
 
 		EncodingKey.MOUSE_POSITION.serialize(writer);
@@ -144,22 +143,24 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ByteSeri
 		if (isCreative()) writer.push(-2);
 		else writer.push(-1);
 
-		writeScreenHandlerSlots(writer, screenHandler);
+		writeScreenHandlerSlots(writer, screenHandler, true);
 	}
 
 	private void serializeMenu(ByteQueue writer, IntIdentifiable screenIdentifiable, ScreenHandler screenHandler) {
 		EncodingKey.MENU.serialize(writer);
 		writer.push(screenIdentifiable.getSelfRawId());
-		writeScreenHandlerSlots(writer, screenHandler);
+		writeScreenHandlerSlots(writer, screenHandler, false);
 	}
 
-	private void writeScreenHandlerSlots(ByteQueue writer, ScreenHandler screenHandler) {
+	private void writeScreenHandlerSlots(ByteQueue writer, ScreenHandler screenHandler, boolean isInventoryScreen) {
 		final ItemStack cursorStack = inventory.getCursorStack();
 		if (!cursorStack.isEmpty()) {
 			EncodingKey.MENU_CURSOR_SLOT.serialize(writer);
 			writer.push(cursorStack.getCount());
 			writer.push(((IntIdentifiable) cursorStack.getItem()).getSelfRawId());
 		}
+
+		if (isInventoryScreen) return; // inventory screen does not have additional slot
 
 		final int extraSlots = screenHandler.slots.size() - inventory.main.size();
 		if (extraSlots <= 0) return;
