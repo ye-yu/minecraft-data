@@ -23,7 +23,8 @@ class ConfigFile(
         val bufferInitialCapacity: Int = 4096,
         val parallelWriteThreads: Int = 1,
         val writeMillisecondSleep: Int = 500,
-        val convertToJson: Boolean = true
+        val convertToJson: Boolean = true,
+        val writeTickSleep: Int = 10
 ) {
 
     fun writeToModFile() {

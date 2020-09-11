@@ -29,8 +29,8 @@ dependencies {
   modImplementation("net.fabricmc", "fabric-language-kotlin", Fabric.Kotlin.version)
   modImplementation("net.fabricmc.fabric-api", "fabric-api", Fabric.API.version)
 
-  modImplementation(Mods.modmenu)
-
+//  modImplementation(Mods.modmenu)
+//
 //  includeApi(Jetbrains.Kotlin.stdLib)
 //  includeApi(Jetbrains.Kotlin.reflect)
 //  includeApi(Jetbrains.Kotlin.annotations)

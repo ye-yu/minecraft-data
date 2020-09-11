@@ -6,7 +6,6 @@ import fp.yeyu.mcdata.thread.Parser
 import fp.yeyu.mcdata.thread.PlayDataGroup
 import fp.yeyu.mcdata.thread.Publisher
 import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -15,7 +14,8 @@ object PlayData : ClientModInitializer {
     private val logger: Logger = LogManager.getLogger()
     private lateinit var publisherThread: Thread
     private lateinit var consumerThread: Thread
-    private val emptyThread = Thread {}
+    private val emptyThread = Thread { }
+    private var tick = 0
 
     override fun onInitializeClient() {
         publisherThread = Thread(PlayDataGroup, { Publisher.start() }, "publisher thread")
@@ -39,8 +39,6 @@ object PlayData : ClientModInitializer {
                         logger.info("Completed.")
                     }, "parser thread").start()
                 } else {
-                    if (!publisherThread.startIfNotAlive()) publisherThread = emptyThread
-                    if (!consumerThread.startIfNotAlive()) consumerThread = emptyThread
                     logger.info("Player entered a world. Starting publisher...")
                     Publisher.startTracking = true
                     logger.info("Starting consumer...")
@@ -48,21 +46,35 @@ object PlayData : ClientModInitializer {
                 }
             }
         }
+
+        ClientTickEvents.END_WORLD_TICK.register {
+            if (!publisherThread.startIfNotAlive()) publisherThread = emptyThread
+            if (!consumerThread.startIfNotAlive()) consumerThread = emptyThread
+
+            tick = ++tick % ConfigFile.configuration.writeTickSleep
+            if (tick == 0) {
+                Publisher.publishNext = true
+            }
+        }
         logger.info("Initialized PlayData client")
     }
 
     private fun Thread.startIfNotAlive(): Boolean {
-        if (state != Thread.State.NEW) {
-            logger.error("Cannot start thread $name: State is in $state")
-            logger.info(stackTrace.joinToString(",\n") { it.className })
-            return false
+        return when {
+            this == emptyThread -> return true
+            state == Thread.State.TERMINATED -> {
+                logger.error("Cannot start thread $name: State is in $state")
+                logger.info(stackTrace.joinToString(",\n") { it.className })
+                false
+            }
+            else -> {
+                if (!isAlive) {
+                    logger.info("(Re)started thread: $name")
+                    logger.info(stackTrace.joinToString(",\n") { it.className })
+                    start()
+                }
+                true
+            }
         }
-
-        if (!isAlive) {
-            logger.info("(Re)started thread: $name")
-            logger.info(stackTrace.joinToString(",\n") { it.className })
-            start()
-        }
-        return true
     }
 }
