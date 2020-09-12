@@ -1,10 +1,7 @@
 package fp.yeyu.mcdata
 
 import fp.yeyu.mcdata.interfaces.PlayDataState
-import fp.yeyu.mcdata.thread.Consumer
-import fp.yeyu.mcdata.thread.Parser
-import fp.yeyu.mcdata.thread.PlayDataGroup
-import fp.yeyu.mcdata.thread.Publisher
+import fp.yeyu.mcdata.thread.*
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import org.apache.logging.log4j.LogManager
@@ -48,6 +45,7 @@ object PlayData : ClientModInitializer {
         }
 
         ClientTickEvents.END_WORLD_TICK.register {
+            Replayer.tick()
             if (!publisherThread.startIfNotAlive()) publisherThread = emptyThread
             if (!consumerThread.startIfNotAlive()) consumerThread = emptyThread
 
